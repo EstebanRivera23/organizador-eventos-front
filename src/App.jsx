@@ -1,163 +1,285 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import "./App.css";
 
-function Hoy() {
-  const tareasUrgentes = [
-    {
-      id: 1,
-      evento: "Boda de Ana y Luis",
-      tarea: "Confirmar catering",
-      fecha: "Hoy",
-      horas: 2,
-      prioridad: "Alta",
-    },
-    {
-      id: 2,
-      evento: "Cumpleaños de Laura",
-      tarea: "Llamar proveedor de sonido",
-      fecha: "Hoy",
-      horas: 1,
-      prioridad: "Media",
-    },
-    {
-      id: 3,
-      evento: "Evento empresarial",
-      tarea: "Verificar disponibilidad del salón",
-      fecha: "Hoy",
-      horas: 3,
-      prioridad: "Alta",
-    },
-  ];
+const todayTasks = [
+  {
+    id: 1,
+    event: "Boda de Ana y Luis",
+    task: "Confirmar catering",
+    date: "Hoy",
+    hours: 2,
+    priority: "Alta",
+    status: "Pendiente",
+  },
+  {
+    id: 2,
+    event: "Cumpleaños de Laura",
+    task: "Llamar proveedor de sonido",
+    date: "Hoy",
+    hours: 1,
+    priority: "Media",
+    status: "En revisión",
+  },
+  {
+    id: 3,
+    event: "Evento empresarial",
+    task: "Verificar disponibilidad del salón",
+    date: "Hoy",
+    hours: 3,
+    priority: "Alta",
+    status: "Pendiente",
+  },
+];
 
+function Layout({ children }) {
   return (
-    <main className="container">
-      <h1>Vista Hoy</h1>
-      <p className="description">
-        Aquí aparecen las gestiones urgentes del día para los eventos independientes.
-      </p>
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-icon">OE</div>
+          <div>
+            <h2>EventFlow</h2>
+            <p>Organizador de eventos</p>
+          </div>
+        </div>
 
-      {tareasUrgentes.length === 0 ? (
-        <section className="empty-state">
-          <h2>No tienes tareas urgentes para hoy</h2>
-          <p>Cuando existan tareas próximas a vencer, aparecerán en esta sección.</p>
-        </section>
-      ) : (
-        <section className="task-list">
-          {tareasUrgentes.map((item) => (
-            <article className="task-card" key={item.id}>
-              <span className={`priority ${item.prioridad.toLowerCase()}`}>
-                Prioridad {item.prioridad}
+        <nav className="menu">
+          <NavLink to="/hoy">Hoy</NavLink>
+          <NavLink to="/crear">Crear evento</NavLink>
+          <NavLink to="/evento/1">Detalle evento</NavLink>
+          <NavLink to="/progreso">Progreso</NavLink>
+          <NavLink to="/login">Login</NavLink>
+        </nav>
+
+        <div className="sidebar-note">
+          <strong>Sprint 0</strong>
+          <span>Prototipo inicial y rutas base.</span>
+        </div>
+      </aside>
+
+      <section className="main-area">
+        <header className="topbar">
+          <div>
+            <p className="eyebrow">Panel de gestión</p>
+            <h1>Organizador de Eventos Independientes</h1>
+          </div>
+
+          <span className="demo-badge">Usuario demo</span>
+        </header>
+
+        {children}
+      </section>
+    </div>
+  );
+}
+
+function Hoy() {
+  return (
+    <Layout>
+      <section className="hero-card">
+        <div>
+          <p className="eyebrow">Vista Hoy</p>
+          <h2>Gestiones urgentes del día</h2>
+          <p>
+            Aquí se priorizan las tareas que requieren atención inmediata para
+            evitar retrasos en la preparación de los eventos.
+          </p>
+        </div>
+
+        <div className="hero-number">
+          <span>{todayTasks.length}</span>
+          <p>Tareas activas</p>
+        </div>
+      </section>
+
+      <section className="stats-grid">
+        <article>
+          <span>Eventos activos</span>
+          <strong>3</strong>
+        </article>
+
+        <article>
+          <span>Horas estimadas hoy</span>
+          <strong>6h</strong>
+        </article>
+
+        <article>
+          <span>Prioridad alta</span>
+          <strong>2</strong>
+        </article>
+      </section>
+
+      <section className="task-board">
+        {todayTasks.map((item) => (
+          <article className="event-card" key={item.id}>
+            <div className="card-header">
+              <span className={`priority ${item.priority.toLowerCase()}`}>
+                {item.priority}
               </span>
+              <span className="status">{item.status}</span>
+            </div>
 
-              <h2>{item.tarea}</h2>
+            <h3>{item.task}</h3>
+            <p>{item.event}</p>
 
-              <p>
-                <strong>Evento:</strong> {item.evento}
-              </p>
-
-              <p>
-                <strong>Fecha límite:</strong> {item.fecha}
-              </p>
-
-              <p>
-                <strong>Horas estimadas:</strong> {item.horas}h
-              </p>
-            </article>
-          ))}
-        </section>
-      )}
-    </main>
+            <div className="card-footer">
+              <span>{item.date}</span>
+              <span>{item.hours} horas</span>
+            </div>
+          </article>
+        ))}
+      </section>
+    </Layout>
   );
 }
 
 function Crear() {
   return (
-    <main className="container">
-      <h1>Crear evento</h1>
-      <p className="description">
-        Formulario inicial para registrar un evento. Esta función se completará en el Sprint 1.
-      </p>
+    <Layout>
+      <section className="content-card">
+        <p className="eyebrow">Nuevo evento</p>
+        <h2>Crear evento</h2>
+        <p>
+          Pantalla base para registrar un evento. Esta funcionalidad se
+          completará en el Sprint 1.
+        </p>
 
-      <form className="form">
-        <label>
-          Nombre del evento
-          <input type="text" placeholder="Ejemplo: Boda de Ana y Luis" />
-        </label>
+        <form className="form-grid">
+          <label>
+            Nombre del evento
+            <input type="text" placeholder="Ejemplo: Boda de Ana y Luis" />
+          </label>
 
-        <label>
-          Fecha del evento
-          <input type="date" />
-        </label>
+          <label>
+            Fecha del evento
+            <input type="date" />
+          </label>
 
-        <label>
-          Horas máximas de trabajo por día
-          <input type="number" placeholder="Ejemplo: 6" />
-        </label>
+          <label>
+            Horas máximas por día
+            <input type="number" placeholder="Ejemplo: 6" />
+          </label>
 
-        <button type="button">Guardar evento demo</button>
-      </form>
-    </main>
+          <label>
+            Tipo de evento
+            <select>
+              <option>Boda</option>
+              <option>Cumpleaños</option>
+              <option>Evento empresarial</option>
+              <option>Otro</option>
+            </select>
+          </label>
+
+          <button type="button">Guardar evento demo</button>
+        </form>
+      </section>
+    </Layout>
   );
 }
 
 function EventoDetalle() {
   return (
-    <main className="container">
-      <h1>Detalle del evento</h1>
-      <p className="description">
-        En esta sección se mostrarán las subtareas logísticas del evento seleccionado.
-      </p>
+    <Layout>
+      <section className="content-card">
+        <p className="eyebrow">Detalle</p>
+        <h2>Boda de Ana y Luis</h2>
+        <p>
+          Pantalla base para visualizar las tareas principales del evento
+          seleccionado.
+        </p>
 
-      <section className="task-card">
-        <h2>Plan logístico inicial</h2>
-        <p>Reservar salón</p>
-        <p>Enviar invitaciones</p>
-        <p>Confirmar catering</p>
-        <p>Coordinar proveedores</p>
+        <div className="timeline">
+          <div>
+            <strong>Reservar salón</strong>
+            <span>Pendiente</span>
+          </div>
+
+          <div>
+            <strong>Enviar invitaciones</strong>
+            <span>En proceso</span>
+          </div>
+
+          <div>
+            <strong>Confirmar catering</strong>
+            <span>Urgente</span>
+          </div>
+
+          <div>
+            <strong>Coordinar proveedores</strong>
+            <span>Pendiente</span>
+          </div>
+        </div>
       </section>
-    </main>
+    </Layout>
   );
 }
 
 function Progreso() {
   return (
-    <main className="container">
-      <h1>Progreso del evento</h1>
-      <p className="description">
-        Barra de avance para visualizar el estado general de preparación del evento.
-      </p>
+    <Layout>
+      <section className="content-card">
+        <p className="eyebrow">Seguimiento</p>
+        <h2>Progreso del evento</h2>
+        <p>
+          Barra inicial para visualizar el avance de preparación del evento.
+        </p>
 
-      <div className="progress-container">
-        <div className="progress-bar" style={{ width: "25%" }}>
-          25%
+        <div className="progress-wrapper">
+          <div className="progress-info">
+            <span>Preparación general</span>
+            <strong>25%</strong>
+          </div>
+
+          <div className="progress-track">
+            <div className="progress-fill"></div>
+          </div>
         </div>
-      </div>
 
-      <p className="progress-text">1 de 4 tareas logísticas completadas.</p>
-    </main>
+        <p className="progress-note">1 de 4 tareas completadas.</p>
+      </section>
+    </Layout>
+  );
+}
+
+function Login() {
+  return (
+    <Layout>
+      <section className="login-card">
+        <p className="eyebrow">Acceso</p>
+        <h2>Iniciar sesión</h2>
+        <p>
+          Pantalla base de autenticación. Esta funcionalidad se completará en el
+          Sprint 2.
+        </p>
+
+        <form className="form-grid">
+          <label>
+            Correo electrónico
+            <input type="email" placeholder="usuario@correo.com" />
+          </label>
+
+          <label>
+            Contraseña
+            <input type="password" placeholder="********" />
+          </label>
+
+          <button type="button">Ingresar demo</button>
+        </form>
+      </section>
+    </Layout>
   );
 }
 
 function App() {
   return (
     <BrowserRouter>
-      <nav className="navbar">
-        <h2>Organizador de Eventos</h2>
-
-        <div className="nav-links">
-          <Link to="/hoy">Hoy</Link>
-          <Link to="/crear">Crear evento</Link>
-          <Link to="/evento/1">Evento</Link>
-          <Link to="/progreso">Progreso</Link>
-        </div>
-      </nav>
-
       <Routes>
         <Route path="/" element={<Hoy />} />
         <Route path="/hoy" element={<Hoy />} />
         <Route path="/crear" element={<Crear />} />
         <Route path="/evento/:id" element={<EventoDetalle />} />
         <Route path="/progreso" element={<Progreso />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
