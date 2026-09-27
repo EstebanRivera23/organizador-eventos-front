@@ -1,4 +1,8 @@
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import CrearEvento from "./pages/CrearEvento";
+import EventoDetalle from "./pages/EventoDetalle";
+import Eventos from "./pages/Eventos";
 import "./App.css";
 
 const todayTasks = [
@@ -30,48 +34,6 @@ const todayTasks = [
     status: "Pendiente",
   },
 ];
-
-function Layout({ children }) {
-  return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-icon">OE</div>
-          <div>
-            <h2>EventFlow</h2>
-            <p>Organizador de eventos</p>
-          </div>
-        </div>
-
-        <nav className="menu">
-          <NavLink to="/hoy">Hoy</NavLink>
-          <NavLink to="/crear">Crear evento</NavLink>
-          <NavLink to="/evento/1">Detalle evento</NavLink>
-          <NavLink to="/progreso">Progreso</NavLink>
-          <NavLink to="/login">Login</NavLink>
-        </nav>
-
-        <div className="sidebar-note">
-          <strong>Sprint 0</strong>
-          <span>Prototipo inicial y rutas base.</span>
-        </div>
-      </aside>
-
-      <section className="main-area">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">Panel de gestión</p>
-            <h1>Organizador de Eventos Independientes</h1>
-          </div>
-
-          <span className="demo-badge">Usuario demo</span>
-        </header>
-
-        {children}
-      </section>
-    </div>
-  );
-}
 
 function Hoy() {
   return (
@@ -128,87 +90,6 @@ function Hoy() {
             </div>
           </article>
         ))}
-      </section>
-    </Layout>
-  );
-}
-
-function Crear() {
-  return (
-    <Layout>
-      <section className="content-card">
-        <p className="eyebrow">Nuevo evento</p>
-        <h2>Crear evento</h2>
-        <p>
-          Pantalla base para registrar un evento. Esta funcionalidad se
-          completará en el Sprint 1.
-        </p>
-
-        <form className="form-grid">
-          <label>
-            Nombre del evento
-            <input type="text" placeholder="Ejemplo: Boda de Ana y Luis" />
-          </label>
-
-          <label>
-            Fecha del evento
-            <input type="date" />
-          </label>
-
-          <label>
-            Horas máximas por día
-            <input type="number" placeholder="Ejemplo: 6" />
-          </label>
-
-          <label>
-            Tipo de evento
-            <select>
-              <option>Boda</option>
-              <option>Cumpleaños</option>
-              <option>Evento empresarial</option>
-              <option>Otro</option>
-            </select>
-          </label>
-
-          <button type="button">Guardar evento demo</button>
-        </form>
-      </section>
-    </Layout>
-  );
-}
-
-function EventoDetalle() {
-  return (
-    <Layout>
-      <section className="content-card">
-        <p className="eyebrow">Detalle</p>
-        <h2>Boda de Ana y Luis</h2>
-        <p>
-          Pantalla base para visualizar las tareas principales del evento
-          seleccionado.
-        </p>
-
-        <div className="timeline">
-          <div>
-            <strong>Reservar salón</strong>
-            <span>Pendiente</span>
-          </div>
-
-          <div>
-            <strong>Enviar invitaciones</strong>
-            <span>En proceso</span>
-          </div>
-
-          <div>
-            <strong>Confirmar catering</strong>
-            <span>Urgente</span>
-          </div>
-
-          <div>
-            <strong>Coordinar proveedores</strong>
-            <span>Pendiente</span>
-          </div>
-        </div>
       </section>
     </Layout>
   );
@@ -276,7 +157,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Hoy />} />
         <Route path="/hoy" element={<Hoy />} />
-        <Route path="/crear" element={<Crear />} />
+        <Route path="/eventos" element={<Eventos />} />
+        <Route path="/crear" element={<CrearEvento />} />
         <Route path="/evento/:id" element={<EventoDetalle />} />
         <Route path="/progreso" element={<Progreso />} />
         <Route path="/login" element={<Login />} />
