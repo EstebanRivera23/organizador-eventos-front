@@ -1,0 +1,42 @@
+const dosDigitos = (n) => String(n).padStart(2, "0");
+
+// Las fechas sin hora ("2026-10-05") se leen como fecha local para evitar
+// que se corran un día por la zona horaria.
+function leerFecha(valor) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+    const [anio, mes, dia] = valor.split("-").map(Number);
+    return new Date(anio, mes - 1, dia);
+  }
+  return new Date(valor);
+}
+
+// Valor que espera un <input type="datetime-local"> (AAAA-MM-DDTHH:MM).
+export function aInputFechaHora(valor) {
+  if (!valor) return "";
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(valor)) return valor;
+
+  const fecha = new Date(valor);
+  if (Number.isNaN(fecha.getTime())) return "";
+
+  return `${fecha.getFullYear()}-${dosDigitos(fecha.getMonth() + 1)}-${dosDigitos(
+    fecha.getDate(),
+  )}T${dosDigitos(fecha.getHours())}:${dosDigitos(fecha.getMinutes())}`;
+}
+
+// Valor que espera un <input type="date"> (AAAA-MM-DD).
+export function aInputFecha(valor) {
+  return valor ? String(valor).slice(0, 10) : "";
+}
+
+export function formatearFecha(valor) {
+  if (!valor) return "—";
+  return leerFecha(valor).toLocaleDateString("es", { dateStyle: "medium" });
+}
+
+export function formatearFechaHora(valor) {
+  if (!valor) return "—";
+  return leerFecha(valor).toLocaleString("es", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
