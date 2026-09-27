@@ -2,14 +2,12 @@
 export const TIPOS_EVENTO = [
   { value: "Boda", label: "Boda" },
   { value: "Cumpleaños", label: "Cumpleaños" },
-  { value: "Evento empresarial", label: "Evento empresarial" },
-  { value: "Otro", label: "Otro" },
 ];
 
 export const ESTADOS_SUBTAREA = [
   { value: "pendiente", label: "Pendiente" },
   { value: "en_progreso", label: "En progreso" },
-  { value: "completada", label: "Completada" },
+  { value: "finalizado", label: "Finalizado" },
 ];
 
 export function etiquetaEstado(valor) {

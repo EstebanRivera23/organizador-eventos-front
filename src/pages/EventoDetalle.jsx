@@ -67,7 +67,7 @@ function EventoDetalle() {
     const actualizado = await actualizarEvento(id, cambios);
     setDatos((actuales) => ({ ...actuales, evento: actualizado }));
     setEditando(false);
-    setMensaje("Cambios guardados.");
+    setMensaje("Evento actualizado correctamente.");
   }
 
   async function agregarSubtarea(nueva) {
@@ -84,7 +84,7 @@ function EventoDetalle() {
     try {
       await eliminarEvento(id);
       navigate("/eventos", {
-        state: { mensaje: `Se eliminó el evento "${evento.nombre}".` },
+        state: { mensaje: "Evento eliminado correctamente." },
       });
     } catch (error) {
       setErrorEliminar(error.message);
@@ -232,8 +232,8 @@ function EventoDetalle() {
 
       <ConfirmDialog
         abierto={confirmando}
-        titulo="¿Eliminar este evento?"
-        mensaje={`Se eliminará "${evento.nombre}" junto con sus subtareas. Esta acción no se puede deshacer.`}
+        titulo="¿Deseas eliminar este evento?"
+        mensaje={`Esta acción no se puede deshacer. Se eliminará "${evento.nombre}" junto con sus subtareas.`}
         textoConfirmar="Sí, eliminar"
         procesando={eliminando}
         error={errorEliminar}
