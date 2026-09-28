@@ -574,7 +574,7 @@ a:focus {
   color: var(--primary-dark);
 }
 
-.subtask-status.completada {
+.subtask-status.finalizado {
   background: var(--soft-green);
   color: var(--success);
 }

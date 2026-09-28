@@ -28,7 +28,7 @@ function Eventos() {
             <h2>Mis eventos</h2>
           </div>
           <Link className="btn-link" to="/crear">
-            Nuevo evento
+            Crear evento
           </Link>
         </div>
 
@@ -47,7 +47,13 @@ function Eventos() {
         {!error && eventos === null && <p>Cargando eventos...</p>}
 
         {eventos?.length === 0 && (
-          <p>Todavía no hay eventos. Crea el primero para empezar.</p>
+          <div className="empty-state">
+            <p><strong>Aún no tienes eventos.</strong></p>
+            <p>Crea tu primer evento para comenzar a organizar tus tareas logísticas.</p>
+            <Link className="btn-link" to="/crear">
+              Crear evento
+            </Link>
+          </div>
         )}
 
         {eventos?.length > 0 && (
