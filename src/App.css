@@ -821,3 +821,25 @@ a:focus {
     animation: none;
   }
 }
+
+/* Vista Hoy: regla de orden visible */
+.regla-orden {
+  padding: 18px 22px;
+  border: 1px solid #ddd6fe;
+  border-left: 6px solid var(--primary);
+  border-radius: 18px;
+  background: #faf8ff;
+}
+
+.regla-orden h2 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--primary-dark);
+}
+
+.regla-orden ol {
+  margin: 8px 0 0;
+  padding-left: 22px;
+  color: var(--text);
+  line-height: 1.5;
+}
