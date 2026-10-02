@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarEventos, obtenerGestionesHoy } from "../api/eventos";
 import Layout from "../components/Layout";
+import ReglaOrden from "../components/ReglaOrden";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { diasEntre, formatearFecha } from "../utils/fechas";
 
@@ -128,8 +129,8 @@ function Hoy() {
           <p className="eyebrow">Vista Hoy</p>
           <h2>Gestiones urgentes del día</h2>
           <p>
-            Hoy es {formatearFecha(gestiones.fecha_actual)}. Primero aparecen
-            las gestiones vencidas, luego las de hoy y al final las próximas.
+            Hoy es {formatearFecha(gestiones.fecha_actual)}. Aquí están tus
+            gestiones pendientes, empezando por las que no pueden esperar.
           </p>
         </div>
 
@@ -147,6 +148,8 @@ function Hoy() {
           </article>
         ))}
       </section>
+
+      {total > 0 && <ReglaOrden />}
 
       {total === 0 ? (
         <section className="content-card hoy-state">
