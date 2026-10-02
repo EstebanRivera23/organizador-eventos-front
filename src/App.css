@@ -831,6 +831,10 @@ a:focus {
   background: #faf8ff;
 }
 
+.regla-orden + .content-card {
+  margin-top: 22px;
+}
+
 .regla-orden h2 {
   margin: 0;
   font-size: 17px;
