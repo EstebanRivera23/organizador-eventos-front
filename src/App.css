@@ -624,3 +624,23 @@ a:focus {
     align-items: flex-start;
   }
 }
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--primary-dark);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: var(--soft-purple);
+}
+
+.auth-checking {
+  padding: 40px;
+  text-align: center;
+  color: var(--primary-dark);
+  font-weight: 600;
+}

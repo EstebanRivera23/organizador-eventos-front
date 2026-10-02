@@ -112,3 +112,48 @@ export function crearSubtarea(eventoId, datos) {
   subtareas = [...subtareas, subtarea];
   return responder(subtarea);
 }
+
+// --- Auth (Sprint 2) ---
+// Simulado en memoria: acepta cualquier correo con contraseña >= 6
+// caracteres. Como no hay backend real detrás, la "sesión" no sobrevive un
+// refresh de página (igual que el resto de datos en modo mock).
+let organizadorActual = null;
+
+export function login(email, password) {
+  if (!email) {
+    return Promise.reject(
+      new ApiError(400, { email: ["Este campo es obligatorio."] }),
+    );
+  }
+  if (!password) {
+    return Promise.reject(
+      new ApiError(400, { password: ["Este campo es obligatorio."] }),
+    );
+  }
+  if (password.length < 6) {
+    return Promise.reject(
+      new ApiError(400, {
+        password: ["La contraseña debe tener al menos 6 caracteres."],
+      }),
+    );
+  }
+
+  organizadorActual = {
+    id: "mock-organizador",
+    nombre: email.split("@")[0],
+    email,
+  };
+
+  return responder({
+    message: "Login correcto",
+    token: "mock-token",
+    organizador: organizadorActual,
+  });
+}
+
+export function obtenerPerfil() {
+  if (!organizadorActual) {
+    return Promise.reject(new ApiError(401, { detail: "No autenticado." }));
+  }
+  return responder(organizadorActual);
+}
