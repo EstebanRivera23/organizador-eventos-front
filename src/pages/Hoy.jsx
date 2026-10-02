@@ -149,7 +149,7 @@ function Hoy() {
         ))}
       </section>
 
-      {total > 0 && <ReglaOrden />}
+      <ReglaOrden />
 
       {total === 0 ? (
         <section className="content-card hoy-state">
