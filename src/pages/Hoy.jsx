@@ -43,9 +43,27 @@ function textoUrgencia(grupo, fechaObjetivo, fechaActual) {
   return dias === 1 ? "Vence mañana" : `Faltan ${dias} días`;
 }
 
+// Mientras llegan los datos se muestra la silueta de la vista, para que el
+// contenido no "salte" al aparecer.
+function Cargando() {
+  return (
+    <div role="status" aria-live="polite">
+      <span className="visually-hidden">Cargando tus gestiones...</span>
+      <div className="hoy-skeleton hoy-skeleton-hero" aria-hidden="true" />
+      <div className="hoy-list hoy-skeleton-list" aria-hidden="true">
+        <div className="hoy-skeleton" />
+        <div className="hoy-skeleton" />
+        <div className="hoy-skeleton" />
+      </div>
+    </div>
+  );
+}
+
 function Hoy() {
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState("");
+  // Cambia cada vez que se pulsa "Reintentar" para repetir la petición.
+  const [intento, setIntento] = useState(0);
 
   useEffect(() => {
     let activo = true;
@@ -58,22 +76,33 @@ function Hoy() {
         const nombres = Object.fromEntries(
           eventos.map((evento) => [evento.id, evento.nombre]),
         );
-        setDatos({ gestiones, nombres });
+        setDatos({ gestiones, nombres, hayEventos: eventos.length > 0 });
       })
       .catch((err) => activo && setError(err.message));
 
     return () => {
       activo = false;
     };
-  }, []);
+  }, [intento]);
+
+  function reintentar() {
+    setError("");
+    setDatos(null);
+    setIntento((actual) => actual + 1);
+  }
 
   if (error) {
     return (
       <Layout>
-        <section className="content-card">
-          <p className="alert-error" role="alert">
-            {error}
+        <section className="content-card hoy-state" role="alert">
+          <h2>No pudimos cargar tus gestiones</h2>
+          <p>{error}</p>
+          <p>
+            Tus datos no se perdieron. Revisa tu conexión e inténtalo de nuevo.
           </p>
+          <button type="button" className="btn-link" onClick={reintentar}>
+            Reintentar
+          </button>
         </section>
       </Layout>
     );
@@ -82,14 +111,12 @@ function Hoy() {
   if (datos === null) {
     return (
       <Layout>
-        <section className="content-card">
-          <p>Cargando gestiones...</p>
-        </section>
+        <Cargando />
       </Layout>
     );
   }
 
-  const { gestiones, nombres } = datos;
+  const { gestiones, nombres, hayEventos } = datos;
   const cantidad = (clave) => gestiones[clave]?.length ?? 0;
   const urgentes = cantidad("vencidas") + cantidad("para_hoy");
   const total = urgentes + cantidad("proximas");
@@ -122,17 +149,23 @@ function Hoy() {
       </section>
 
       {total === 0 ? (
-        <section className="content-card">
+        <section className="content-card hoy-state">
+          <h2>
+            {hayEventos
+              ? "No tienes gestiones pendientes"
+              : "Aún no tienes gestiones"}
+          </h2>
           <p>
-            <strong>No tienes gestiones pendientes.</strong>
+            {hayEventos
+              ? "Estás al día. Cuando agregues subtareas a tus eventos, aquí las verás ordenadas por urgencia."
+              : "Crea tu primer evento y agrégale subtareas para verlas aquí ordenadas por urgencia."}
           </p>
-          <p>
-            Agrega subtareas a tus eventos para verlas aquí ordenadas por
-            urgencia.
-          </p>
-          <Link className="btn-link" to="/eventos">
-            Ver mis eventos
-          </Link>
+          <div className="hoy-state-actions">
+            <Link className="btn-link" to="/crear">
+              Crear evento
+            </Link>
+            {hayEventos && <Link to="/eventos">Ver mis eventos</Link>}
+          </div>
         </section>
       ) : (
         GRUPOS.map((grupo) => {
