@@ -644,3 +644,107 @@ a:focus {
   color: var(--primary-dark);
   font-weight: 600;
 }
+
+/* Vista Hoy: gestiones agrupadas por urgencia */
+.hoy-group {
+  margin-top: 28px;
+}
+
+.hoy-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hoy-group-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.hoy-count {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.hoy-group.vencidas .hoy-count {
+  background: var(--soft-red);
+  color: #991b1b;
+}
+
+.hoy-group.para_hoy .hoy-count {
+  background: var(--soft-orange);
+  color: #9a3412;
+}
+
+.hoy-group > p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.hoy-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.gestion-card {
+  height: 100%;
+  border-left-width: 8px;
+}
+
+.gestion-card.vencidas {
+  border-left-color: var(--danger);
+  background: #fffafa;
+}
+
+.gestion-card.para_hoy {
+  border-left-color: var(--accent);
+}
+
+/* Las próximas no compiten por atención con las urgentes. */
+.gestion-card.proximas {
+  border-left-width: 1px;
+  box-shadow: none;
+}
+
+.gestion-card .card-header {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gestion-card a {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.urgency-badge {
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.gestion-card.vencidas .urgency-badge {
+  background: var(--soft-red);
+  color: #991b1b;
+}
+
+.gestion-card.para_hoy .urgency-badge {
+  background: var(--soft-orange);
+  color: #9a3412;
+}
+
+@media (max-width: 900px) {
+  .hoy-list {
+    grid-template-columns: 1fr;
+  }
+}

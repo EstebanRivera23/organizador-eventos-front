@@ -22,6 +22,9 @@ const api = {
       method: "POST",
       body: datos,
     }),
+
+  // Gestiones agrupadas en vencidas / para_hoy / proximas, ya ordenadas.
+  obtenerGestionesHoy: () => request("/api/subtareas/hoy/"),
 };
 
 export const {
@@ -32,4 +35,5 @@ export const {
   eliminarEvento,
   listarSubtareas,
   crearSubtarea,
+  obtenerGestionesHoy,
 } = USE_MOCK ? mock : api;

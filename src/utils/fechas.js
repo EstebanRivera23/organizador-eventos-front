@@ -40,3 +40,10 @@ export function formatearFechaHora(valor) {
     timeStyle: "short",
   });
 }
+
+// Días completos entre dos fechas sin hora ("AAAA-MM-DD"). Negativo si
+// `hasta` es anterior a `desde`.
+export function diasEntre(desde, hasta) {
+  const MS_POR_DIA = 24 * 60 * 60 * 1000;
+  return Math.round((leerFecha(hasta) - leerFecha(desde)) / MS_POR_DIA);
+}

@@ -10,8 +10,27 @@ export const ESTADOS_SUBTAREA = [
   { value: "finalizado", label: "Finalizado" },
 ];
 
+// El backend usa "por hacer" / "en curso" como estados por defecto; se tratan
+// como equivalentes a los valores del formulario.
+const EQUIVALENCIAS_ESTADO = {
+  "por hacer": "pendiente",
+  "en curso": "en_progreso",
+};
+
+function normalizarEstado(valor) {
+  const estado = String(valor ?? "").trim().toLowerCase();
+  return EQUIVALENCIAS_ESTADO[estado] ?? estado;
+}
+
 export function etiquetaEstado(valor) {
+  const normalizado = normalizarEstado(valor);
   return (
-    ESTADOS_SUBTAREA.find((estado) => estado.value === valor)?.label ?? valor
+    ESTADOS_SUBTAREA.find((estado) => estado.value === normalizado)?.label ??
+    valor
   );
+}
+
+// Clase CSS del estado (sin espacios), para pintar la etiqueta.
+export function claseEstado(valor) {
+  return normalizarEstado(valor).replace(/\s+/g, "_");
 }
