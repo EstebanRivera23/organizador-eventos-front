@@ -748,3 +748,76 @@ a:focus {
     grid-template-columns: 1fr;
   }
 }
+
+/* Vista Hoy: estados vacío, carga y error */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hoy-state {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.hoy-state p {
+  max-width: 520px;
+  margin: 8px auto 0;
+}
+
+.hoy-state .btn-link {
+  display: inline-block;
+  margin-top: 24px;
+}
+
+.hoy-state-actions {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hoy-state-actions a:not(.btn-link) {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.hoy-skeleton {
+  height: 190px;
+  border-radius: 26px;
+  background: linear-gradient(90deg, #ece7df 25%, #f6f2ec 50%, #ece7df 75%);
+  background-size: 200% 100%;
+  animation: hoy-shimmer 1.4s ease-in-out infinite;
+}
+
+.hoy-skeleton-hero {
+  height: 170px;
+  border-radius: 28px;
+}
+
+.hoy-skeleton-list {
+  margin-top: 22px;
+}
+
+@keyframes hoy-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hoy-skeleton {
+    animation: none;
+  }
+}
