@@ -1,10 +1,14 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthProvider";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import Login from "./pages/Login";
 import CrearEvento from "./pages/CrearEvento";
 import EventoDetalle from "./pages/EventoDetalle";
 import Eventos from "./pages/Eventos";
 import "./App.css";
 
+// TODO (KAN-37): reemplazar con datos reales de GET /api/subtareas/hoy/.
 const todayTasks = [
   {
     id: 1,
@@ -122,47 +126,66 @@ function Progreso() {
   );
 }
 
-function Login() {
-  return (
-    <Layout>
-      <section className="login-card">
-        <p className="eyebrow">Acceso</p>
-        <h2>Iniciar sesión</h2>
-        <p>
-          Pantalla base de autenticación. Esta funcionalidad se completará en el
-          Sprint 2.
-        </p>
-
-        <form className="form-grid">
-          <label>
-            Correo electrónico
-            <input type="email" placeholder="usuario@correo.com" />
-          </label>
-
-          <label>
-            Contraseña
-            <input type="password" placeholder="********" />
-          </label>
-
-          <button type="button">Ingresar demo</button>
-        </form>
-      </section>
-    </Layout>
-  );
-}
-
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Hoy />} />
-        <Route path="/hoy" element={<Hoy />} />
-        <Route path="/eventos" element={<Eventos />} />
-        <Route path="/crear" element={<CrearEvento />} />
-        <Route path="/evento/:id" element={<EventoDetalle />} />
-        <Route path="/progreso" element={<Progreso />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Hoy />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hoy"
+            element={
+              <ProtectedRoute>
+                <Hoy />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/eventos"
+            element={
+              <ProtectedRoute>
+                <Eventos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/crear"
+            element={
+              <ProtectedRoute>
+                <CrearEvento />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/evento/:id"
+            element={
+              <ProtectedRoute>
+                <EventoDetalle />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/progreso"
+            element={
+              <ProtectedRoute>
+                <Progreso />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Cualquier URL desconocida vuelve a /hoy (o a /login si no hay sesión). */}
+          <Route path="*" element={<Navigate to="/hoy" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

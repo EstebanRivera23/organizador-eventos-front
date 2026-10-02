@@ -3,6 +3,20 @@ const API_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 // Sin URL configurada (o con VITE_USE_MOCK=true) se usan datos locales.
 export const USE_MOCK = !API_URL || import.meta.env.VITE_USE_MOCK === "true";
 
+export const TOKEN_KEY = "oe_token";
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token) {
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+}
+
 export class ApiError extends Error {
   constructor(status, data) {
     super(
@@ -17,6 +31,7 @@ export class ApiError extends Error {
 
 export async function request(path, { method = "GET", body } = {}) {
   let response;
+  const token = getToken();
 
   try {
     response = await fetch(`${API_URL}${path}`, {
@@ -24,11 +39,19 @@ export async function request(path, { method = "GET", body } = {}) {
       headers: {
         Accept: "application/json",
         ...(body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
     throw new ApiError(0, { detail: "No se pudo conectar con el servidor." });
+  }
+
+  if (response.status === 401 && token) {
+    // El token ya no es válido (expiró o la sesión no existe). Se limpia y
+    // se avisa a quien esté escuchando (AuthContext) para cerrar sesión.
+    setToken(null);
+    window.dispatchEvent(new Event("auth:unauthorized"));
   }
 
   if (response.status === 204) return null;
