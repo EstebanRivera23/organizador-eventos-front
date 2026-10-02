@@ -11,7 +11,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import EventoForm from "../components/EventoForm";
 import Layout from "../components/Layout";
 import SubtareaForm from "../components/SubtareaForm";
-import { etiquetaEstado } from "../constants";
+import { claseEstado, etiquetaEstado } from "../constants";
 import { formatearFecha, formatearFechaHora } from "../utils/fechas";
 
 function EventoDetalle() {
@@ -218,7 +218,7 @@ function EventoDetalle() {
                     {subtarea.horas_estimadas} h
                   </small>
                 </div>
-                <span className={`subtask-status ${subtarea.estado}`}>
+                <span className={`subtask-status ${claseEstado(subtarea.estado)}`}>
                   {etiquetaEstado(subtarea.estado)}
                 </span>
               </li>
