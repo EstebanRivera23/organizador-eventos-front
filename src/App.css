@@ -475,6 +475,7 @@ a:focus {
 }
 
 .content-card .alert-error,
+.login-card .alert-error,
 .confirm-dialog .alert-error {
   background: var(--soft-red);
   color: var(--danger);
