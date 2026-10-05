@@ -36,11 +36,6 @@ function Layout({ children }) {
             <NavLink to="/login">Login</NavLink>
           )}
         </nav>
-
-        <div className="sidebar-note">
-          <strong>Sprint 2</strong>
-          <span>Login y vista "Hoy" con gestiones urgentes.</span>
-        </div>
       </aside>
 
       <section className="main-area">
