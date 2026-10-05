@@ -3,7 +3,7 @@ import { USE_MOCK } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
 function Layout({ children }) {
-  const { organizador, isAuthenticated, logout } = useAuth();
+  const { organizador, logout } = useAuth();
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -23,18 +23,12 @@ function Layout({ children }) {
         </div>
 
         <nav className="menu">
-          {isAuthenticated ? (
-            <>
-              <NavLink to="/hoy">Hoy</NavLink>
-              <NavLink to="/eventos" end>
-                Eventos
-              </NavLink>
-              <NavLink to="/crear">Crear evento</NavLink>
-              <NavLink to="/progreso">Progreso</NavLink>
-            </>
-          ) : (
-            <NavLink to="/login">Login</NavLink>
-          )}
+          <NavLink to="/hoy">Hoy</NavLink>
+          <NavLink to="/eventos" end>
+            Eventos
+          </NavLink>
+          <NavLink to="/crear">Crear evento</NavLink>
+          <NavLink to="/progreso">Progreso</NavLink>
         </nav>
       </aside>
 
@@ -55,24 +49,14 @@ function Layout({ children }) {
               </span>
             )}
 
-            {isAuthenticated ? (
-              <>
-                {/* El perfil puede no haber cargado (backend caído) aunque
-                    haya sesión: igual se permite cerrar sesión. */}
-                <span className="demo-badge">
-                  {organizador?.nombre ?? "Sesión activa"}
-                </span>
-                <button
-                  type="button"
-                  className="logout-btn"
-                  onClick={handleLogout}
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <span className="demo-badge">Sin sesión</span>
-            )}
+            {/* El perfil puede no haber cargado (backend caído) aunque
+                haya sesión: igual se permite cerrar sesión. */}
+            <span className="demo-badge">
+              {organizador?.nombre ?? "Sesión activa"}
+            </span>
+            <button type="button" className="logout-btn" onClick={handleLogout}>
+              Cerrar sesión
+            </button>
           </div>
         </header>
 
