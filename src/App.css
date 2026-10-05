@@ -55,7 +55,6 @@ a:focus {
   padding: 28px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .brand {
@@ -103,19 +102,6 @@ a:focus {
 .menu a.active {
   background: rgba(255, 255, 255, 0.12);
   color: white;
-}
-
-.sidebar-note {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
-  padding: 18px;
-  display: grid;
-  gap: 6px;
-}
-
-.sidebar-note span {
-  color: #ddd6fe;
-  font-size: 14px;
 }
 
 .main-area {
@@ -373,7 +359,37 @@ a:focus {
 }
 
 .login-card {
-  max-width: 560px;
+  max-width: 520px;
+}
+
+/* Pantalla de login: sin barra lateral, todo centrado en la página */
+
+.login-page {
+  min-height: 100vh;
+  padding: 34px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-header h1 {
+  margin: 4px 0 0;
+  font-size: 30px;
+}
+
+.login-card {
+  width: 100%;
+}
+
+.login-card h2,
+.login-card > p {
+  text-align: center;
 }
 
 /* Formularios de eventos y subtareas */

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Campo from "../components/Campo";
-import Layout from "../components/Layout";
 import { erroresDeApi } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
@@ -56,15 +55,15 @@ function Login() {
   }
 
   return (
-    <Layout>
+    <main className="login-page">
+      <header className="login-header">
+        <p className="eyebrow">Panel de gestión</p>
+        <h1>Organizador de Eventos Independientes</h1>
+      </header>
+
       <section className="login-card">
-        <p className="eyebrow">Acceso</p>
         <h2>Iniciar sesión</h2>
-        <p>
-          Ingresa con tu correo y una contraseña de al menos 6 caracteres. Si
-          el correo no existe todavía, se crea la cuenta automáticamente con
-          esa contraseña.
-        </p>
+        <p>Ingresa con tu correo y una contraseña de al menos 6 caracteres.</p>
 
         <form className="form-grid" onSubmit={handleSubmit} noValidate>
           {errorGeneral && (
@@ -101,7 +100,7 @@ function Login() {
           </button>
         </form>
       </section>
-    </Layout>
+    </main>
   );
 }
 
