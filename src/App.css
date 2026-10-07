@@ -299,6 +299,11 @@ a:focus {
   background: #fbfaf8;
 }
 
+.form-grid input::placeholder,
+.form-grid textarea::placeholder {
+  font-weight: 400;
+}
+
 .form-grid button {
   border: none;
   border-radius: 16px;
