@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
+import Configuracion from "./pages/Configuracion";
 import CrearEvento from "./pages/CrearEvento";
 import EventoDetalle from "./pages/EventoDetalle";
 import Eventos from "./pages/Eventos";
@@ -88,6 +89,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Progreso />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/configuracion"
+            element={
+              <ProtectedRoute>
+                <Configuracion />
               </ProtectedRoute>
             }
           />

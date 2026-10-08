@@ -29,6 +29,7 @@ function Layout({ children }) {
           </NavLink>
           <NavLink to="/crear">Crear evento</NavLink>
           <NavLink to="/progreso">Progreso</NavLink>
+          <NavLink to="/configuracion">Configuración</NavLink>
         </nav>
       </aside>
 

@@ -4,6 +4,9 @@ export const TIPOS_EVENTO = [
   { value: "Cumpleaños", label: "Cumpleaños" },
 ];
 
+// Mismo rango que valida el backend en /api/organizador/limite-diario/.
+export const LIMITE_DIARIO = { minimo: 1, maximo: 16, porDefecto: 6 };
+
 export const ESTADOS_SUBTAREA = [
   { value: "pendiente", label: "Pendiente" },
   { value: "en_progreso", label: "En progreso" },

@@ -1,3 +1,5 @@
+import { LIMITE_DIARIO } from "../constants";
+
 const estaVacio = (valor) => String(valor ?? "").trim() === "";
 
 export function validarEvento(valores) {
@@ -44,4 +46,22 @@ export function validarSubtarea(valores) {
   }
 
   return errores;
+}
+
+// Devuelve el mensaje de error, o "" si el límite es válido.
+export function validarLimiteDiario(valor) {
+  if (estaVacio(valor)) {
+    return "Escribe cuántas horas por día quieres como límite.";
+  }
+
+  const horas = Number(valor);
+  if (
+    Number.isNaN(horas) ||
+    horas < LIMITE_DIARIO.minimo ||
+    horas > LIMITE_DIARIO.maximo
+  ) {
+    return `El límite debe estar entre ${LIMITE_DIARIO.minimo} y ${LIMITE_DIARIO.maximo} horas por día.`;
+  }
+
+  return "";
 }

@@ -232,3 +232,26 @@ export function obtenerPerfil() {
   }
   return responder(organizadorActual);
 }
+
+// --- Límite diario (Sprint 3) ---
+// Mismo contrato que /api/organizador/limite-diario/: 6 por defecto y solo
+// acepta valores entre 1 y 16.
+let limiteHorasDia = 6;
+
+export function obtenerLimiteDiario() {
+  return responder({ limite_horas_dia: limiteHorasDia.toFixed(2) });
+}
+
+export function actualizarLimiteDiario(horas) {
+  const valor = Number(horas);
+  if (Number.isNaN(valor) || valor < 1 || valor > 16) {
+    return Promise.reject(
+      new ApiError(400, {
+        limite_horas_dia: ["El límite debe estar entre 1 y 16 horas por día."],
+      }),
+    );
+  }
+
+  limiteHorasDia = valor;
+  return responder({ limite_horas_dia: limiteHorasDia.toFixed(2) });
+}
