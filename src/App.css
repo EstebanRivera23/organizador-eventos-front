@@ -365,12 +365,55 @@ a:focus {
 /* Pantalla de login: sin barra lateral, todo centrado en la página */
 
 .login-page {
+  position: relative;
   min-height: 100vh;
-  padding: 34px 20px;
+  padding: 84px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  /* El fondo es solo decoración: va como imagen de fondo para que los
+     lectores de pantalla no lo anuncien. */
+  background: #f7f2ea url("./assets/brand/login-bg-simple.svg") no-repeat
+    right center / cover;
+}
+
+/* La abeja solo sale en pantallas anchas y apaisadas; en las demás quedaría
+   detrás del título o de la tarjeta. */
+
+@media (min-width: 1360px) and (min-aspect-ratio: 16 / 10) {
+  .login-page {
+    background-image: url("./assets/brand/login-art.svg");
+  }
+}
+
+/* En pantallas 16:10 la abeja queda más cerca del centro: se corre un poco a
+   la derecha para que no toque la tarjeta. */
+
+@media (min-width: 1360px) and (min-aspect-ratio: 16 / 10) and (max-aspect-ratio: 17 / 10) {
+  .login-page {
+    background-position: right -30px center;
+  }
+}
+
+.login-brand {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-brand-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #211c2f;
+}
+
+.login-brand-name span {
+  color: var(--primary-dark);
 }
 
 .login-header {
@@ -379,12 +422,22 @@ a:focus {
 }
 
 .login-header h1 {
-  margin: 4px 0 0;
+  margin: 0;
   font-size: 30px;
 }
 
 .login-card {
   width: 100%;
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 900px) {
+  .login-brand {
+    top: 20px;
+    left: 20px;
+  }
 }
 
 .login-card h2,

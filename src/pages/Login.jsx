@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Campo from "../components/Campo";
 import { erroresDeApi } from "../api/client";
+import logo from "../assets/brand/logo-eventflow.svg";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -56,8 +57,14 @@ function Login() {
 
   return (
     <main className="login-page">
+      <div className="login-brand">
+        <img src={logo} alt="" width="38" height="38" />
+        <span className="login-brand-name">
+          Event<span>Flow</span>
+        </span>
+      </div>
+
       <header className="login-header">
-        <p className="eyebrow">Panel de gestión</p>
         <h1>Organizador de Eventos Independientes</h1>
       </header>
 
