@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiError, erroresDeApi } from "../api/client";
 import { actualizarSubtarea } from "../api/eventos";
-import { formatearFecha } from "../utils/fechas";
+import { formatearFecha, formatearFechaConDia } from "../utils/fechas";
 import Campo from "./Campo";
 
 const enHoras = (horas) => `${Number(horas)} h`;
@@ -111,12 +111,18 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
 
   // Horas que todavía caben ese día con las demás gestiones ya planificadas.
   const horasLibres = conflicto
-    ? Math.max(
-        0,
-        Number(conflicto.limite_horas_dia) -
-          Number(conflicto.horas_otras_gestiones),
+    ? Number(
+        conflicto.horas_disponibles ??
+          Math.max(
+            0,
+            Number(conflicto.limite_horas_dia) -
+              Number(conflicto.horas_otras_gestiones),
+          ),
       )
     : 0;
+
+  // Días cercanos donde la gestión sí cabe, calculados por el backend.
+  const sugeridas = conflicto?.fechas_sugeridas;
 
   return (
     <dialog
@@ -141,6 +147,35 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
               ` El ${formatearFecha(conflicto.fecha)} no te cabe: elige otro día.`}
           </p>
 
+          {sugeridas?.length > 0 && (
+            <div className="fechas-sugeridas">
+              <p id="sugeridas-titulo">Días cercanos donde sí te cabe:</p>
+              <ul aria-labelledby="sugeridas-titulo">
+                {sugeridas.map((sugerida) => (
+                  <li key={sugerida.fecha}>
+                    <button
+                      type="button"
+                      className="btn-suave"
+                      disabled={guardando}
+                      onClick={() => guardar({ fecha_objetivo: sugerida.fecha })}
+                    >
+                      <strong>{formatearFechaConDia(sugerida.fecha)}</strong>
+                      <span>
+                        quedarías con {enHoras(sugerida.horas_planificadas)}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {sugeridas?.length === 0 && (
+            <p>
+              No hay un día cercano con espacio antes del evento. Elige tú la
+              fecha o vuelve y reduce las horas.
+            </p>
+          )}
+
           <div className="form-grid">
             {errorGeneral && (
               <p className="alert-error" role="alert">
@@ -150,7 +185,7 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
 
             <Campo
               type="date"
-              label="Nueva fecha"
+              label={sugeridas?.length > 0 ? "O elige otra fecha" : "Nueva fecha"}
               name="fecha_objetivo"
               value={fecha}
               onChange={(e) => {
