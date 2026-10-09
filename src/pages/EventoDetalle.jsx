@@ -10,6 +10,7 @@ import {
 import ConfirmDialog from "../components/ConfirmDialog";
 import EventoForm from "../components/EventoForm";
 import Layout from "../components/Layout";
+import ReprogramarDialog from "../components/ReprogramarDialog";
 import SubtareaForm from "../components/SubtareaForm";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { formatearFecha, formatearFechaHora } from "../utils/fechas";
@@ -30,6 +31,9 @@ function EventoDetalle() {
   const [confirmando, setConfirmando] = useState(false);
   const [eliminando, setEliminando] = useState(false);
   const [errorEliminar, setErrorEliminar] = useState("");
+  // Subtarea que se está reprogramando (null si el diálogo está cerrado).
+  const [reprogramando, setReprogramando] = useState(null);
+  const [mensajeSubtareas, setMensajeSubtareas] = useState("");
 
   useEffect(() => {
     let activo = true;
@@ -76,6 +80,19 @@ function EventoDetalle() {
       ...actuales,
       subtareas: [...actuales.subtareas, creada],
     }));
+  }
+
+  function alReprogramar(actualizada) {
+    setReprogramando(null);
+    setDatos((actuales) => ({
+      ...actuales,
+      subtareas: actuales.subtareas.map((subtarea) =>
+        subtarea.id === actualizada.id ? actualizada : subtarea,
+      ),
+    }));
+    setMensajeSubtareas(
+      `Listo. "${actualizada.titulo}" quedó para el ${formatearFecha(actualizada.fecha_objetivo)}, con ${Number(actualizada.horas_estimadas)} h ${Number(actualizada.horas_estimadas) === 1 ? "estimada" : "estimadas"}.`,
+    );
   }
 
   async function confirmarEliminar() {
@@ -204,6 +221,12 @@ function EventoDetalle() {
           )}
         </div>
 
+        {mensajeSubtareas && (
+          <p className="alert-success" role="status">
+            {mensajeSubtareas}
+          </p>
+        )}
+
         {subtareas.length === 0 ? (
           <p>Este evento todavía no tiene subtareas.</p>
         ) : (
@@ -218,9 +241,26 @@ function EventoDetalle() {
                     {subtarea.horas_estimadas} h
                   </small>
                 </div>
-                <span className={`subtask-status ${claseEstado(subtarea.estado)}`}>
-                  {etiquetaEstado(subtarea.estado)}
-                </span>
+                <div className="subtask-acciones">
+                  <span
+                    className={`subtask-status ${claseEstado(subtarea.estado)}`}
+                  >
+                    {etiquetaEstado(subtarea.estado)}
+                  </span>
+                  {subtarea.estado !== "finalizado" && (
+                    <button
+                      type="button"
+                      className="btn-suave"
+                      aria-label={`Reprogramar ${subtarea.titulo}`}
+                      onClick={() => {
+                        setMensajeSubtareas("");
+                        setReprogramando(subtarea);
+                      }}
+                    >
+                      Reprogramar
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -229,6 +269,15 @@ function EventoDetalle() {
         <h3 className="subsection-title">Agregar subtarea</h3>
         <SubtareaForm onSubmit={agregarSubtarea} />
       </section>
+
+      {reprogramando && (
+        <ReprogramarDialog
+          key={reprogramando.id}
+          gestion={reprogramando}
+          onCerrar={() => setReprogramando(null)}
+          onGuardado={alReprogramar}
+        />
+      )}
 
       <ConfirmDialog
         abierto={confirmando}
