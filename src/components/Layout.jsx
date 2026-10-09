@@ -4,6 +4,7 @@ import { USE_MOCK } from "../api/client";
 import logo from "../assets/brand/logo-eventflow.svg";
 import { useAuth } from "../context/AuthContext";
 import ConfirmDialog from "./ConfirmDialog";
+import "@fontsource-variable/schibsted-grotesk";
 import "../interior.css";
 
 // Marco de todas las pantallas con sesión: barra superior con las pestañas,
