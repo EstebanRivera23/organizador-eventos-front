@@ -160,6 +160,61 @@ export function crearSubtarea(eventoId, datos) {
   return responder(subtarea);
 }
 
+const sinCeros = (horas) => String(Number(Number(horas).toFixed(2)));
+
+// Misma regla que PATCH /api/subtareas/<id>/: si el cambio le agrega horas a
+// un día y el total pasa del límite diario, no guarda y responde 409.
+export function actualizarSubtarea(id, cambios) {
+  const actual = subtareas.find((subtarea) => subtarea.id === Number(id));
+  if (!actual) {
+    return Promise.reject(
+      new ApiError(404, { detail: "Subtarea no encontrada." }),
+    );
+  }
+
+  const nueva = { ...actual, ...cambios, id: actual.id, evento: actual.evento };
+  const horas = Number(nueva.horas_estimadas);
+  const horasAntes =
+    actual.fecha_objetivo === nueva.fecha_objetivo &&
+    actual.estado !== "finalizado"
+      ? Number(actual.horas_estimadas)
+      : 0;
+
+  if (nueva.estado !== "finalizado" && horas > horasAntes) {
+    const otras = subtareas
+      .filter(
+        (subtarea) =>
+          subtarea.id !== actual.id &&
+          subtarea.estado !== "finalizado" &&
+          subtarea.fecha_objetivo === nueva.fecha_objetivo,
+      )
+      .reduce((total, subtarea) => total + Number(subtarea.horas_estimadas), 0);
+    const planificadas = otras + horas;
+
+    if (planificadas > limiteHorasDia) {
+      return Promise.reject(
+        new ApiError(409, {
+          detail: `Quedarías con ${sinCeros(planificadas)}h planificadas (límite ${sinCeros(limiteHorasDia)}h)`,
+          codigo: "sobrecarga_diaria",
+          conflicto: {
+            fecha: nueva.fecha_objetivo,
+            horas_planificadas: planificadas.toFixed(2),
+            limite_horas_dia: limiteHorasDia.toFixed(2),
+            excede_por: (planificadas - limiteHorasDia).toFixed(2),
+            horas_otras_gestiones: otras.toFixed(2),
+            horas_gestion: horas.toFixed(2),
+          },
+        }),
+      );
+    }
+  }
+
+  subtareas = subtareas.map((subtarea) =>
+    subtarea.id === actual.id ? nueva : subtarea,
+  );
+  return responder(nueva);
+}
+
 // Misma agrupación y orden que GET /api/subtareas/hoy/: no incluye las
 // finalizadas; ordena por fecha objetivo y, en empate, por menos horas.
 export function obtenerGestionesHoy() {

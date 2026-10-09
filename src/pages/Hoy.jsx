@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarEventos, obtenerGestionesHoy } from "../api/eventos";
 import Layout from "../components/Layout";
 import ReglaOrden from "../components/ReglaOrden";
+import ReprogramarDialog from "../components/ReprogramarDialog";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { diasEntre, formatearFecha } from "../utils/fechas";
 
@@ -65,6 +66,16 @@ function Hoy() {
   const [error, setError] = useState("");
   // Cambia cada vez que se pulsa "Reintentar" para repetir la petición.
   const [intento, setIntento] = useState(0);
+  // Gestión que se está reprogramando (null si el diálogo está cerrado).
+  const [reprogramando, setReprogramando] = useState(null);
+  const [mensaje, setMensaje] = useState("");
+  const mensajeRef = useRef(null);
+
+  // La gestión reprogramada puede cambiar de grupo y su botón desaparece de
+  // donde estaba: el foco pasa al aviso de confirmación.
+  useEffect(() => {
+    if (mensaje) mensajeRef.current?.focus();
+  }, [mensaje]);
 
   useEffect(() => {
     let activo = true;
@@ -90,6 +101,21 @@ function Hoy() {
     setError("");
     setDatos(null);
     setIntento((actual) => actual + 1);
+  }
+
+  // Tras reprogramar se vuelve a pedir /hoy para que la gestión salga en el
+  // grupo y en el orden que le da el backend, sin recargar la página.
+  async function alReprogramar(actualizada) {
+    setReprogramando(null);
+    try {
+      const gestiones = await obtenerGestionesHoy();
+      setDatos((actuales) => ({ ...actuales, gestiones }));
+      setMensaje(
+        `Listo. "${actualizada.titulo}" quedó para el ${formatearFecha(actualizada.fecha_objetivo)}, con ${Number(actualizada.horas_estimadas)} h ${Number(actualizada.horas_estimadas) === 1 ? "estimada" : "estimadas"}.`,
+      );
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   if (error) {
@@ -150,6 +176,17 @@ function Hoy() {
       </section>
 
       <ReglaOrden />
+
+      {mensaje && (
+        <p
+          className="alert-success aviso-suelto"
+          role="status"
+          tabIndex={-1}
+          ref={mensajeRef}
+        >
+          {mensaje}
+        </p>
+      )}
 
       {total === 0 ? (
         <section className="content-card hoy-state">
@@ -223,6 +260,18 @@ function Hoy() {
                           <span>{formatearFecha(gestion.fecha_objetivo)}</span>
                           <span>{Number(gestion.horas_estimadas)} h</span>
                         </div>
+
+                        <button
+                          type="button"
+                          className="btn-suave"
+                          aria-label={`Reprogramar ${gestion.titulo}`}
+                          onClick={() => {
+                            setMensaje("");
+                            setReprogramando(gestion);
+                          }}
+                        >
+                          Reprogramar
+                        </button>
                       </article>
                     </li>
                   ))}
@@ -231,6 +280,15 @@ function Hoy() {
             </section>
           );
         })
+      )}
+
+      {reprogramando && (
+        <ReprogramarDialog
+          key={reprogramando.id}
+          gestion={reprogramando}
+          onCerrar={() => setReprogramando(null)}
+          onGuardado={alReprogramar}
+        />
       )}
     </Layout>
   );

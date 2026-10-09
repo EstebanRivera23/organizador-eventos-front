@@ -23,6 +23,11 @@ const api = {
       body: datos,
     }),
 
+  // Si el cambio deja el día por encima del límite diario responde 409 con
+  // las cifras del conflicto.
+  actualizarSubtarea: (id, cambios) =>
+    request(`/api/subtareas/${id}/`, { method: "PATCH", body: cambios }),
+
   // Gestiones agrupadas en vencidas / para_hoy / proximas, ya ordenadas.
   obtenerGestionesHoy: () => request("/api/subtareas/hoy/"),
 };
@@ -35,5 +40,6 @@ export const {
   eliminarEvento,
   listarSubtareas,
   crearSubtarea,
+  actualizarSubtarea,
   obtenerGestionesHoy,
 } = USE_MOCK ? mock : api;
