@@ -8,6 +8,7 @@ import CrearEvento from "./pages/CrearEvento";
 import EventoDetalle from "./pages/EventoDetalle";
 import Eventos from "./pages/Eventos";
 import Hoy from "./pages/Hoy";
+import Registro from "./pages/Registro";
 import "./App.css";
 
 function Progreso() {
@@ -43,6 +44,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
 
           <Route
             path="/"

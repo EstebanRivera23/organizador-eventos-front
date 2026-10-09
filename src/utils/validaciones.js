@@ -65,3 +65,26 @@ export function validarLimiteDiario(valor) {
 
   return "";
 }
+
+export function validarRegistro(valores) {
+  const errores = {};
+
+  if (estaVacio(valores.nombre)) {
+    errores.nombre = "Escribe tu nombre.";
+  }
+  if (estaVacio(valores.email)) {
+    errores.email = "Escribe tu correo.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valores.email.trim())) {
+    errores.email = "Escribe un correo válido, por ejemplo ana@correo.com.";
+  }
+  if (String(valores.password ?? "").length < 6) {
+    errores.password = "La contraseña debe tener al menos 6 caracteres.";
+  }
+  if (estaVacio(valores.confirmacion)) {
+    errores.confirmacion = "Escribe la contraseña otra vez.";
+  } else if (valores.confirmacion !== valores.password) {
+    errores.confirmacion = "Las contraseñas no coinciden.";
+  }
+
+  return errores;
+}
