@@ -77,30 +77,32 @@ function EventoForm({ evento, textoBoton, onSubmit, onCancelar }) {
         error={errores.nombre}
       />
 
-      <Campo
-        as="select"
-        label="Tipo de evento"
-        name="tipo"
-        value={valores.tipo}
-        onChange={handleChange}
-        error={errores.tipo}
-      >
-        <option value="">Selecciona un tipo</option>
-        {TIPOS_EVENTO.map((tipo) => (
-          <option key={tipo.value} value={tipo.value}>
-            {tipo.label}
-          </option>
-        ))}
-      </Campo>
+      <div className="form-row">
+        <Campo
+          as="select"
+          label="Tipo de evento"
+          name="tipo"
+          value={valores.tipo}
+          onChange={handleChange}
+          error={errores.tipo}
+        >
+          <option value="">Selecciona un tipo</option>
+          {TIPOS_EVENTO.map((tipo) => (
+            <option key={tipo.value} value={tipo.value}>
+              {tipo.label}
+            </option>
+          ))}
+        </Campo>
 
-      <Campo
-        label="Contacto del cliente"
-        name="cliente_contacto"
-        placeholder="Nombre, teléfono o correo"
-        value={valores.cliente_contacto}
-        onChange={handleChange}
-        error={errores.cliente_contacto}
-      />
+        <Campo
+          label="Contacto del cliente"
+          name="cliente_contacto"
+          placeholder="Nombre, teléfono o correo"
+          value={valores.cliente_contacto}
+          onChange={handleChange}
+          error={errores.cliente_contacto}
+        />
+      </div>
 
       <div className="form-row">
         <Campo
