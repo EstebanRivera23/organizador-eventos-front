@@ -43,135 +43,6 @@ a:focus {
   outline-offset: 3px;
 }
 
-.app-shell {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 290px 1fr;
-}
-
-.sidebar {
-  background: #211c2f;
-  color: white;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.brand-icon {
-  width: 40px;
-  height: 40px;
-}
-
-.brand h2 {
-  margin: 0;
-  font-size: 22px;
-}
-
-.brand p {
-  margin: 4px 0 0;
-  color: #c4b5fd;
-  font-size: 14px;
-}
-
-.menu {
-  margin-top: 44px;
-  display: grid;
-  gap: 12px;
-}
-
-.menu a {
-  color: #e5e7eb;
-  text-decoration: none;
-  padding: 13px 14px;
-  border-radius: 14px;
-  transition: 0.2s ease;
-}
-
-.menu a:hover,
-.menu a.active {
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
-}
-
-.main-area {
-  padding: 34px;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-}
-
-.topbar h1 {
-  margin: 0;
-  font-size: 30px;
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--primary);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 12px;
-}
-
-.demo-badge {
-  background: var(--soft-purple);
-  color: var(--primary-dark);
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 700;
-}
-
-.hero-card {
-  background: linear-gradient(135deg, #ffffff, #f5f3ff);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 30px;
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  box-shadow: var(--shadow);
-}
-
-.hero-card h2 {
-  margin: 8px 0 8px;
-  font-size: 32px;
-}
-
-.hero-card p {
-  color: var(--muted);
-  max-width: 680px;
-}
-
-.hero-number {
-  min-width: 150px;
-  background: #211c2f;
-  color: white;
-  border-radius: 24px;
-  padding: 24px;
-  text-align: center;
-}
-
-.hero-number span {
-  font-size: 48px;
-  font-weight: 900;
-}
-
-.hero-number p {
-  color: #ddd6fe;
-  margin: 4px 0 0;
-}
-
 .stats-grid {
   margin: 22px 0;
   display: grid;
@@ -198,13 +69,6 @@ a:focus {
   color: var(--primary-dark);
 }
 
-.task-board {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.event-card,
 .content-card,
 .login-card {
   background: var(--panel);
@@ -214,26 +78,17 @@ a:focus {
   box-shadow: var(--shadow);
 }
 
-.event-card h3 {
-  margin: 16px 0 8px;
-  font-size: 22px;
-}
-
-.event-card p,
 .content-card p,
 .login-card p {
   color: var(--muted);
 }
 
-.card-header,
-.card-footer,
 .progress-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.priority,
 .status {
   padding: 7px 12px;
   border-radius: 999px;
@@ -241,25 +96,9 @@ a:focus {
   font-weight: 800;
 }
 
-.priority.alta {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.priority.media {
-  background: #fef3c7;
-  color: #92400e;
-}
-
 .status {
   background: var(--soft-purple);
   color: var(--primary-dark);
-}
-
-.card-footer {
-  margin-top: 24px;
-  color: var(--muted);
-  font-weight: 700;
 }
 
 .content-card,
@@ -311,30 +150,6 @@ a:focus {
 
 .form-grid button:hover {
   filter: brightness(0.95);
-}
-
-.timeline {
-  margin-top: 24px;
-  display: grid;
-  gap: 14px;
-}
-
-.timeline div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-left: 6px solid var(--primary);
-  background: #fbfaf8;
-  padding: 16px;
-  border-radius: 16px;
-}
-
-.timeline span {
-  background: var(--soft-orange);
-  color: #9a3412;
-  padding: 7px 12px;
-  border-radius: 999px;
-  font-weight: 800;
 }
 
 .progress-wrapper {
@@ -605,11 +420,6 @@ a:focus {
   flex-wrap: wrap;
 }
 
-.subsection-title {
-  margin: 32px 0 0;
-  font-size: 20px;
-}
-
 .form-grid textarea {
   resize: vertical;
 }
@@ -708,20 +518,6 @@ a:focus {
 .form-grid .alert-error,
 .form-grid .alert-success {
   margin: 0;
-}
-
-.topbar-badges {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.mock-badge {
-  background: var(--soft-orange);
-  color: #9a3412;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 700;
 }
 
 .detail-list {
@@ -983,10 +779,6 @@ a:focus {
   background: var(--soft-purple);
 }
 
-.gestion-card .btn-suave {
-  margin-top: 16px;
-}
-
 .subtask-acciones {
   display: grid;
   justify-items: end;
@@ -998,14 +790,6 @@ a:focus {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
-}
-
-.btn-suave-peligro {
-  color: var(--danger);
-}
-
-.btn-suave-peligro:hover {
-  background: var(--soft-red);
 }
 
 /* Subtarea en edición: el formulario ocupa todo el ancho del renglón */
@@ -1051,37 +835,10 @@ a:focus {
 }
 
 @media (max-width: 900px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
 
-  .sidebar {
-    border-radius: 0 0 28px 28px;
-  }
-
-  .task-board,
   .stats-grid {
     grid-template-columns: 1fr;
   }
-
-  .hero-card,
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-.logout-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--primary-dark);
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.logout-btn:hover {
-  background: var(--soft-purple);
 }
 
 .auth-checking {
@@ -1094,36 +851,6 @@ a:focus {
 /* Vista Hoy: gestiones agrupadas por urgencia */
 .hoy-group {
   margin-top: 28px;
-}
-
-.hoy-group-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.hoy-group-header h2 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.hoy-count {
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 800;
-  background: #f3f4f6;
-  color: #4b5563;
-}
-
-.hoy-group.vencidas .hoy-count {
-  background: var(--soft-red);
-  color: #991b1b;
-}
-
-.hoy-group.para_hoy .hoy-count {
-  background: var(--soft-orange);
-  color: #9a3412;
 }
 
 .hoy-group > p {
@@ -1140,36 +867,6 @@ a:focus {
   gap: 18px;
 }
 
-.gestion-card {
-  height: 100%;
-  border-left-width: 8px;
-}
-
-.gestion-card.vencidas {
-  border-left-color: var(--danger);
-  background: #fffafa;
-}
-
-.gestion-card.para_hoy {
-  border-left-color: var(--accent);
-}
-
-/* Las próximas no compiten por atención con las urgentes. */
-.gestion-card.proximas {
-  border-left-width: 1px;
-  box-shadow: none;
-}
-
-.gestion-card .card-header {
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.gestion-card a {
-  color: var(--primary-dark);
-  font-weight: 700;
-}
-
 .urgency-badge {
   padding: 7px 12px;
   border-radius: 999px;
@@ -1177,16 +874,6 @@ a:focus {
   font-weight: 800;
   background: #f3f4f6;
   color: #4b5563;
-}
-
-.gestion-card.vencidas .urgency-badge {
-  background: var(--soft-red);
-  color: #991b1b;
-}
-
-.gestion-card.para_hoy .urgency-badge {
-  background: var(--soft-orange);
-  color: #9a3412;
 }
 
 @media (max-width: 900px) {
