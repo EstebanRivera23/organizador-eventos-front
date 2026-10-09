@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { listarEventos, obtenerGestionesHoy } from "../api/eventos";
 import Layout from "../components/Layout";
 import ReglaOrden from "../components/ReglaOrden";
 import ReprogramarDialog from "../components/ReprogramarDialog";
-import { claseEstado, etiquetaEstado } from "../constants";
+import {
+  claseEstado,
+  ESTADOS_FILTRO_HOY,
+  etiquetaEstado,
+} from "../constants";
 import { diasEntre, formatearFecha } from "../utils/fechas";
 import { mensajeReprogramada } from "../utils/gestiones";
 
@@ -63,6 +67,13 @@ function Cargando() {
 }
 
 function Hoy() {
+  // Los filtros viven en la dirección (?evento=3&estado=en curso) para que
+  // se conserven al recargar o al volver atrás.
+  const [parametros, setParametros] = useSearchParams();
+  const eventoId = parametros.get("evento") ?? "";
+  const estado = parametros.get("estado") ?? "";
+  const hayFiltros = Boolean(eventoId || estado);
+
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState("");
   // Cambia cada vez que se pulsa "Reintentar" para repetir la petición.
@@ -83,20 +94,37 @@ function Hoy() {
 
     // La API de /hoy solo trae el id del evento; los nombres salen de la
     // lista de eventos del organizador.
-    Promise.all([obtenerGestionesHoy(), listarEventos()])
+    Promise.all([obtenerGestionesHoy({ eventoId, estado }), listarEventos()])
       .then(([gestiones, eventos]) => {
         if (!activo) return;
         const nombres = Object.fromEntries(
           eventos.map((evento) => [evento.id, evento.nombre]),
         );
-        setDatos({ gestiones, nombres, hayEventos: eventos.length > 0 });
+        setError("");
+        setDatos({ gestiones, nombres, eventos });
       })
       .catch((err) => activo && setError(err.message));
 
     return () => {
       activo = false;
     };
-  }, [intento]);
+  }, [intento, eventoId, estado]);
+
+  function cambiarFiltro(nombre, valor) {
+    setMensaje("");
+    setParametros((actuales) => {
+      const nuevos = new URLSearchParams(actuales);
+      if (valor) nuevos.set(nombre, valor);
+      else nuevos.delete(nombre);
+      return nuevos;
+    });
+  }
+
+  function limpiarFiltros() {
+    setMensaje("");
+    setError("");
+    setParametros({});
+  }
 
   function reintentar() {
     setError("");
@@ -109,7 +137,7 @@ function Hoy() {
   async function alReprogramar(actualizada) {
     setReprogramando(null);
     try {
-      const gestiones = await obtenerGestionesHoy();
+      const gestiones = await obtenerGestionesHoy({ eventoId, estado });
       setDatos((actuales) => ({ ...actuales, gestiones }));
       setMensaje(mensajeReprogramada(actualizada));
     } catch (err) {
@@ -126,9 +154,20 @@ function Hoy() {
           <p>
             Tus datos no se perdieron. Revisa tu conexión e inténtalo de nuevo.
           </p>
-          <button type="button" className="btn-link" onClick={reintentar}>
-            Reintentar
-          </button>
+          <div className="hoy-state-actions">
+            <button type="button" className="btn-link" onClick={reintentar}>
+              Reintentar
+            </button>
+            {hayFiltros && (
+              <button
+                type="button"
+                className="btn-suave"
+                onClick={limpiarFiltros}
+              >
+                Quitar filtros
+              </button>
+            )}
+          </div>
         </section>
       </Layout>
     );
@@ -142,7 +181,8 @@ function Hoy() {
     );
   }
 
-  const { gestiones, nombres, hayEventos } = datos;
+  const { gestiones, nombres, eventos } = datos;
+  const hayEventos = eventos.length > 0;
   const cantidad = (clave) => gestiones[clave]?.length ?? 0;
   const urgentes = cantidad("vencidas") + cantidad("para_hoy");
   const total = urgentes + cantidad("proximas");
@@ -164,6 +204,56 @@ function Hoy() {
           <p>{urgentes === 1 ? "Requiere" : "Requieren"} atención hoy</p>
         </div>
       </section>
+
+      {hayEventos && (
+        <form
+          className="hoy-filtros"
+          aria-label="Filtrar gestiones"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <label>
+            Evento
+            <select
+              value={eventoId}
+              onChange={(e) => cambiarFiltro("evento", e.target.value)}
+            >
+              <option value="">Todos los eventos</option>
+              {eventos.map((evento) => (
+                <option key={evento.id} value={evento.id}>
+                  {evento.nombre}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Estado
+            <select
+              value={estado}
+              onChange={(e) => cambiarFiltro("estado", e.target.value)}
+            >
+              <option value="">Todos los estados</option>
+              {ESTADOS_FILTRO_HOY.map((opcion) => (
+                <option key={opcion.value} value={opcion.value}>
+                  {opcion.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {hayFiltros && (
+            <button type="button" className="btn-suave" onClick={limpiarFiltros}>
+              Limpiar filtros
+            </button>
+          )}
+
+          <p role="status">
+            {hayFiltros
+              ? `Con este filtro: ${plural(total, "gestión", "gestiones")}.`
+              : ""}
+          </p>
+        </form>
+      )}
 
       <section className="stats-grid" aria-label="Resumen de gestiones">
         {GRUPOS.map((grupo) => (
@@ -187,7 +277,17 @@ function Hoy() {
         </p>
       )}
 
-      {total === 0 ? (
+      {total === 0 && hayFiltros ? (
+        <section className="content-card hoy-state">
+          <h2>No hay gestiones con ese filtro</h2>
+          <p>Prueba con otro evento u otro estado, o quita el filtro.</p>
+          <div className="hoy-state-actions">
+            <button type="button" className="btn-link" onClick={limpiarFiltros}>
+              Limpiar filtros
+            </button>
+          </div>
+        </section>
+      ) : total === 0 ? (
         <section className="content-card hoy-state">
           <h2>
             {hayEventos
