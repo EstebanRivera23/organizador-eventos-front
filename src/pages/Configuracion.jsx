@@ -4,13 +4,14 @@ import { actualizarLimiteDiario, obtenerLimiteDiario } from "../api/limite";
 import Campo from "../components/Campo";
 import Layout from "../components/Layout";
 import { LIMITE_DIARIO } from "../constants";
+import { numeroDeHoras } from "../utils/horas";
 import { validarLimiteDiario } from "../utils/validaciones";
 
-// "6.00" -> "6", "4.50" -> "4.5"
+// Valor para el campo de número: "6.00" -> "6", "4.50" -> "4.5"
 const sinCeros = (horas) => String(Number(horas));
 
 const enHoras = (horas) =>
-  `${sinCeros(horas)} ${Number(horas) === 1 ? "hora" : "horas"}`;
+  `${numeroDeHoras(horas)} ${Number(horas) === 1 ? "hora" : "horas"}`;
 
 function Configuracion() {
   const [limite, setLimite] = useState(null);

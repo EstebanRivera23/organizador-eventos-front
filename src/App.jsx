@@ -1,46 +1,15 @@
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Configuracion from "./pages/Configuracion";
 import CrearEvento from "./pages/CrearEvento";
 import EventoDetalle from "./pages/EventoDetalle";
 import Eventos from "./pages/Eventos";
 import Hoy from "./pages/Hoy";
+import Progreso from "./pages/Progreso";
 import Registro from "./pages/Registro";
 import "./App.css";
-
-function Progreso() {
-  return (
-    <Layout>
-      <header className="encabezado">
-        <h1>Progreso</h1>
-        <p className="sub">Cómo va cada evento que organizas.</p>
-      </header>
-
-      <section className="panel panel-relleno formulario">
-        <h2>Progreso del evento</h2>
-        <p>
-          Barra inicial para visualizar el avance de preparación del evento.
-        </p>
-
-        <div className="progress-wrapper">
-          <div className="progress-info">
-            <span>Preparación general</span>
-            <strong>25%</strong>
-          </div>
-
-          <div className="progress-track">
-            <div className="progress-fill"></div>
-          </div>
-        </div>
-
-        <p className="progress-note">1 de 4 tareas completadas.</p>
-      </section>
-    </Layout>
-  );
-}
 
 function App() {
   return (

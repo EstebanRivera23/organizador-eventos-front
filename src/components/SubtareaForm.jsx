@@ -27,7 +27,7 @@ function valoresDe(subtarea) {
     titulo: subtarea.titulo ?? "",
     descripcion: subtarea.descripcion ?? "",
     fecha_objetivo: subtarea.fecha_objetivo,
-    horas_estimadas: String(subtarea.horas_estimadas),
+    horas_estimadas: String(Number(subtarea.horas_estimadas)),
     estado: normalizarEstado(subtarea.estado),
   };
 }

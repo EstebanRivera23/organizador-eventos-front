@@ -18,10 +18,11 @@ import SubtareaForm from "../components/SubtareaForm";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { formatearFecha, formatearFechaHora } from "../utils/fechas";
 import { mensajeReprogramada } from "../utils/gestiones";
+import { enHoras } from "../utils/horas";
 
 function EventoDetalle() {
   const { id } = useParams();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const navigate = useNavigate();
 
   const [datos, setDatos] = useState({
@@ -44,6 +45,12 @@ function EventoDetalle() {
   const [subtareaAEliminar, setSubtareaAEliminar] = useState(null);
   const [eliminandoSubtarea, setEliminandoSubtarea] = useState(false);
   const [errorEliminarSubtarea, setErrorEliminarSubtarea] = useState("");
+
+  // El aviso que llega al crear el evento se muestra una sola vez: se quita
+  // del historial para que no vuelva a salir al recargar la página.
+  useEffect(() => {
+    if (state?.mensaje) navigate(pathname, { replace: true, state: null });
+  }, [state, pathname, navigate]);
 
   useEffect(() => {
     let activo = true;
@@ -86,6 +93,7 @@ function EventoDetalle() {
 
   async function agregarSubtarea(nueva) {
     const creada = await crearSubtarea(id, nueva);
+    setMensaje("");
     setDatos((actuales) => ({
       ...actuales,
       subtareas: [...actuales.subtareas, creada],
@@ -105,6 +113,7 @@ function EventoDetalle() {
     const actualizada = await actualizarSubtarea(subtarea.id, cambios);
     reemplazarSubtarea(actualizada);
     setEditandoSubtarea(null);
+    setMensaje("");
     setMensajeSubtareas(
       `Listo. Se guardaron los cambios de "${actualizada.titulo}".`,
     );
@@ -121,6 +130,7 @@ function EventoDetalle() {
           (subtarea) => subtarea.id !== subtareaAEliminar.id,
         ),
       }));
+      setMensaje("");
       setMensajeSubtareas(`Listo. Se eliminó "${subtareaAEliminar.titulo}".`);
       setSubtareaAEliminar(null);
     } catch (error) {
@@ -138,6 +148,7 @@ function EventoDetalle() {
   function alReprogramar(actualizada) {
     setReprogramando(null);
     reemplazarSubtarea(actualizada);
+    setMensaje("");
     setMensajeSubtareas(mensajeReprogramada(actualizada));
   }
 
@@ -274,7 +285,7 @@ function EventoDetalle() {
               {subtareas.length === 1
                 ? "1 gestión"
                 : `${subtareas.length} gestiones`}
-              , {horasTotales} h estimadas
+              , {enHoras(horasTotales)} estimadas
             </span>
           )}
         </div>
@@ -307,7 +318,7 @@ function EventoDetalle() {
                     {subtarea.descripcion && <p>{subtarea.descripcion}</p>}
                     <small>
                       {formatearFecha(subtarea.fecha_objetivo)} ·{" "}
-                      {subtarea.horas_estimadas} h
+                      {enHoras(subtarea.horas_estimadas)}
                     </small>
                   </div>
                   <div className="subtask-acciones">

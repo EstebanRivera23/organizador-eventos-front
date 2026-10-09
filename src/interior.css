@@ -1119,19 +1119,73 @@
   max-width: 240px;
 }
 
-.interior .progress-track {
-  height: 6px;
-  border-radius: 6px;
-  background: var(--rule);
+/* Progreso */
+
+.interior .avance-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.interior .progress-fill {
-  border-radius: 6px;
+.avance-lista li {
+  padding: 22px 26px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.avance-lista li:last-child {
+  border-bottom: 0;
+}
+
+.avance-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.interior .avance-cabecera h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.interior .avance-cabecera h2 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.interior .avance-cabecera h2 a:hover {
+  text-decoration: underline;
+}
+
+.interior .avance-cabecera p {
+  margin: 2px 0 0;
+  font-size: 14.5px;
+}
+
+.avance-cabecera strong {
+  color: var(--ink);
+  font-size: 24px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.avance-pista {
+  height: 10px;
+  margin: 14px 0 10px;
+  border-radius: 10px;
+  background: var(--rule);
+  overflow: hidden;
+}
+
+.avance-relleno {
+  height: 100%;
+  border-radius: 10px;
   background: var(--cta);
 }
 
-.interior .progress-wrapper {
-  margin: 20px 0 12px;
+.interior .avance-conteo {
+  margin: 10px 0 0;
+  font-size: 15px;
 }
 
 /* Celular y tablet */
