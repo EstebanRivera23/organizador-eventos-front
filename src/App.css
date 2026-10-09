@@ -451,6 +451,12 @@ a:focus {
   text-align: center;
 }
 
+/* Sobre el vidrio el gris normal de ayuda se queda corto de contraste */
+
+.login-card > p {
+  color: #4b5563;
+}
+
 /* Formularios de eventos y subtareas */
 
 .content-card + .content-card {
