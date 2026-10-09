@@ -229,7 +229,7 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
             <strong>{gestion.titulo}</strong> toma{" "}
             {enHoras(gestion.horas_estimadas)}.{" "}
             {horasLibres > 0
-              ? `El ${formatearFecha(conflicto.fecha)} te caben ${enHoras(horasLibres)} más.`
+              ? `El ${formatearFecha(conflicto.fecha)} ${horasLibres === 1 ? "te cabe" : "te caben"} ${enHoras(horasLibres)} más.`
               : `El ${formatearFecha(conflicto.fecha)} ya está lleno con tus otras gestiones: es mejor moverla a otro día.`}
           </p>
 
