@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarEventos, listarSubtareas } from "../api/eventos";
+import abejorroMoto from "../assets/brand/abejorro-moto.svg";
 import Layout from "../components/Layout";
 import { normalizarEstado } from "../constants";
 import { formatearFecha, soloFecha } from "../utils/fechas";
@@ -16,6 +17,16 @@ function avanceDe(gestiones) {
   ).length;
   const porcentaje = total === 0 ? 0 : Math.round((finalizadas / total) * 100);
   return { total, finalizadas, porcentaje };
+}
+
+// Frase de ánimo según el avance de todos los eventos juntos.
+function fraseDeAvance(porcentaje) {
+  if (porcentaje === 0) return "Todavía no cierras ninguna gestión.";
+  if (porcentaje < 50) {
+    return "Vas empezando. Cada gestión que cierres suma a tus eventos.";
+  }
+  if (porcentaje < 100) return "Vas a buen ritmo.";
+  return "Todo finalizado.";
 }
 
 function Progreso() {
@@ -59,6 +70,18 @@ function Progreso() {
     setIntento((actual) => actual + 1);
   }
 
+  // Avance de todos los eventos juntos, para la franja de arriba.
+  const general = { total: 0, finalizadas: 0, porcentaje: 0 };
+  for (const evento of eventos ?? []) {
+    general.total += evento.avance.total;
+    general.finalizadas += evento.avance.finalizadas;
+  }
+  if (general.total > 0) {
+    general.porcentaje = Math.round(
+      (general.finalizadas / general.total) * 100,
+    );
+  }
+
   return (
     <Layout ocultarCrear={eventos?.length === 0}>
       <header className="encabezado">
@@ -90,6 +113,24 @@ function Progreso() {
           <Link className="btn-link" to="/crear">
             Crear evento
           </Link>
+        </div>
+      )}
+
+      {general.total > 0 && (
+        <div className="vidrio franja franja-progreso">
+          <img src={abejorroMoto} alt="" />
+          <div>
+            <strong>
+              {general.finalizadas} de{" "}
+              {plural(
+                general.total,
+                "gestión finalizada",
+                "gestiones finalizadas",
+              )}
+            </strong>
+            <p>{fraseDeAvance(general.porcentaje)}</p>
+          </div>
+          <b>{general.porcentaje} %</b>
         </div>
       )}
 

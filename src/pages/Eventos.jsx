@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { listarEventos } from "../api/eventos";
+import abejorroEventos from "../assets/brand/abejorro-eventos.svg";
 import Layout from "../components/Layout";
 import { formatearDiaYMes, partesDeFecha, soloFecha } from "../utils/fechas";
 
@@ -89,6 +90,21 @@ function Eventos() {
             );
           })}
         </ul>
+      )}
+
+      {eventos?.length > 0 && (
+        <div className="vidrio franja franja-eventos">
+          <img src={abejorroEventos} alt="" />
+          <div>
+            <strong>
+              {eventos.length === 1
+                ? "1 evento en marcha"
+                : `${eventos.length} eventos en marcha`}
+            </strong>
+            <p>Cada uno con sus gestiones y su fecha límite.</p>
+          </div>
+          <Link to="/crear">+ Crear evento</Link>
+        </div>
       )}
     </Layout>
   );
