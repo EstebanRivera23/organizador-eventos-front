@@ -333,11 +333,10 @@ a:focus {
   }
 }
 
-/* Si además la pantalla es alta, la tarjeta de iniciar sesión crece otro
-   15 % sin que haya que bajar con la rueda para ver el botón. La de crear
-   cuenta no, porque tiene más campos. */
+/* La tarjeta de iniciar sesión va un poco más compacta que la de crear
+   cuenta, en cualquier pantalla que no sea de celular. */
 
-@media (min-width: 1000px) and (min-height: 740px) {
+@media (min-width: 700px) {
   .login-page:not(.login-page-larga) .login-lema {
     margin-bottom: 19px;
     font-size: 17px;
