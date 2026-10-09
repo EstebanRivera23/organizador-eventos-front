@@ -15,20 +15,20 @@ import {
 } from "../utils/fechas";
 import { mensajeReprogramada } from "../utils/gestiones";
 
-// El orden de los grupos y de las gestiones dentro de cada uno es el que
-// entrega la API; aquí no se reordena nada.
+// Los grupos se muestran en este orden: primero lo de hoy. El orden de las
+// gestiones dentro de cada grupo es el que entrega la API; no se reordena.
 const GRUPOS = [
-  {
-    clave: "vencidas",
-    titulo: "Vencidas",
-    descripcion: "Su fecha objetivo ya pasó. Atiéndelas primero.",
-    vacio: "No tienes gestiones vencidas.",
-  },
   {
     clave: "para_hoy",
     titulo: "Para hoy",
     descripcion: "Su fecha objetivo es hoy.",
     vacio: "No tienes gestiones para hoy.",
+  },
+  {
+    clave: "vencidas",
+    titulo: "Vencidas",
+    descripcion: "Su fecha objetivo ya pasó. Atiéndelas primero.",
+    vacio: "No tienes gestiones vencidas.",
   },
   {
     clave: "proximas",
