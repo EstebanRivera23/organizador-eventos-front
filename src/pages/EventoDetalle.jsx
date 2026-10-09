@@ -21,7 +21,7 @@ import { mensajeReprogramada } from "../utils/gestiones";
 
 function EventoDetalle() {
   const { id } = useParams();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const navigate = useNavigate();
 
   const [datos, setDatos] = useState({
@@ -44,6 +44,12 @@ function EventoDetalle() {
   const [subtareaAEliminar, setSubtareaAEliminar] = useState(null);
   const [eliminandoSubtarea, setEliminandoSubtarea] = useState(false);
   const [errorEliminarSubtarea, setErrorEliminarSubtarea] = useState("");
+
+  // El aviso que llega al crear el evento se muestra una sola vez: se quita
+  // del historial para que no vuelva a salir al recargar la página.
+  useEffect(() => {
+    if (state?.mensaje) navigate(pathname, { replace: true, state: null });
+  }, [state, pathname, navigate]);
 
   useEffect(() => {
     let activo = true;
@@ -86,6 +92,7 @@ function EventoDetalle() {
 
   async function agregarSubtarea(nueva) {
     const creada = await crearSubtarea(id, nueva);
+    setMensaje("");
     setDatos((actuales) => ({
       ...actuales,
       subtareas: [...actuales.subtareas, creada],
@@ -105,6 +112,7 @@ function EventoDetalle() {
     const actualizada = await actualizarSubtarea(subtarea.id, cambios);
     reemplazarSubtarea(actualizada);
     setEditandoSubtarea(null);
+    setMensaje("");
     setMensajeSubtareas(
       `Listo. Se guardaron los cambios de "${actualizada.titulo}".`,
     );
@@ -121,6 +129,7 @@ function EventoDetalle() {
           (subtarea) => subtarea.id !== subtareaAEliminar.id,
         ),
       }));
+      setMensaje("");
       setMensajeSubtareas(`Listo. Se eliminó "${subtareaAEliminar.titulo}".`);
       setSubtareaAEliminar(null);
     } catch (error) {
@@ -138,6 +147,7 @@ function EventoDetalle() {
   function alReprogramar(actualizada) {
     setReprogramando(null);
     reemplazarSubtarea(actualizada);
+    setMensaje("");
     setMensajeSubtareas(mensajeReprogramada(actualizada));
   }
 
