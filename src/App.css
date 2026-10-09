@@ -791,6 +791,13 @@ a:focus {
   margin: 4px 0;
 }
 
+/* Sin descripción, la fecha quedaba pegada al título en el mismo renglón */
+
+.subtask-list strong,
+.subtask-list small {
+  display: block;
+}
+
 .subtask-list small {
   color: var(--muted);
   font-weight: 700;
@@ -984,6 +991,40 @@ a:focus {
   display: grid;
   justify-items: end;
   gap: 10px;
+}
+
+.subtask-botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-suave-peligro {
+  color: var(--danger);
+}
+
+.btn-suave-peligro:hover {
+  background: var(--soft-red);
+}
+
+/* Subtarea en edición: el formulario ocupa todo el ancho del renglón */
+
+.subtask-list li.editando {
+  display: block;
+}
+
+.subtask-list li.editando h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.subtask-list li.editando .form-grid {
+  margin-top: 14px;
+}
+
+.subtask-list li.editando .field-help {
+  margin: 0;
 }
 
 .alert-success.aviso-suelto {
