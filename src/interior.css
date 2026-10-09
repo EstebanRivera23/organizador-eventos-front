@@ -16,14 +16,20 @@
   --late: #b91c3c;
   --late-t: #fdeef1;
   --today: #a8480a;
-  --today-t: #fff3e2;
+  --today-t: #fdecc8;
   --ok: #15803d;
   --ok-t: #e7f6ec;
-  --soon: #4a5170;
-  --soon-t: #eceef6;
+  --soon: #2f4a7d;
+  --soon-t: #e4ecf8;
+  --borde: #ecdcb8;
 
   min-height: 100vh;
-  background: var(--bg);
+  /* Fondo de toda la app interna: dos manchas suaves, sin el panal del login. */
+  background-color: #f7f2ec;
+  background-image:
+    radial-gradient(900px 520px at 0 0, #dccbf0, transparent 70%),
+    radial-gradient(900px 560px at 100% 100%, #f6d2b6, transparent 70%);
+  background-attachment: fixed;
   color: var(--text);
   font-family: "Schibsted Grotesk Variable", "Schibsted Grotesk", system-ui,
     sans-serif;
@@ -71,7 +77,7 @@
 .interior .panel,
 .interior .content-card {
   background: var(--white);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--borde);
   border-radius: 16px;
   box-shadow: 0 1px 2px rgba(26, 30, 58, 0.04);
   max-width: none;
@@ -398,8 +404,8 @@
 
 .hoy {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
-  gap: 36px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
   align-items: start;
 }
 
@@ -416,6 +422,7 @@
 
 .interior h1.hoy-titular {
   max-width: 15ch;
+  margin-bottom: 24px;
   font-size: clamp(34px, 5.4vw, 56px);
   line-height: 1.04;
   letter-spacing: -0.035em;
@@ -469,7 +476,7 @@
 }
 
 .interior .color-proximas {
-  color: var(--soon);
+  color: #3f5f9a;
 }
 
 .interior .urgency-badge {
@@ -585,6 +592,10 @@
   background: var(--soon-t);
 }
 
+.interior .hoy-group.proximas {
+  border-color: #cfdcf0;
+}
+
 .interior .hoy-group.para_hoy h2,
 .hoy-group.para_hoy .grupo-cantidad {
   color: var(--today);
@@ -676,9 +687,7 @@
 }
 
 .lateral {
-  position: sticky;
-  top: 92px;
-  padding: 22px;
+  padding: 20px 22px;
 }
 
 .interior .lateral h2 {
@@ -699,25 +708,35 @@
   border-top: 0;
 }
 
+/* Fecha de un evento dentro de un hexágono color miel. */
 .dia-mes {
   flex: none;
-  width: 50px;
+  width: 52px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #fbe3a0;
   line-height: 1;
   text-align: center;
 }
 
 .dia-mes b {
   display: block;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--ink);
 }
 
 .dia-mes span {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #7a5a10;
 }
 
 .proximo strong {
@@ -803,15 +822,12 @@
 }
 
 .event-list .dia-mes {
-  width: auto;
+  width: 58px;
+  height: 66px;
 }
 
 .event-list .dia-mes b {
-  font-size: 32px;
-}
-
-.event-list .dia-mes span {
-  font-size: 14px;
+  font-size: 25px;
 }
 
 .event-list h3 {
@@ -1248,6 +1264,303 @@
   font-size: 15px;
 }
 
+/* Barra lateral (solo en computador) */
+
+.barra-lateral {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .interior {
+    padding-left: 250px;
+  }
+
+  .barra {
+    display: none;
+  }
+
+  .barra-lateral {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    padding: 26px 18px 18px;
+    border-right: 1px solid #eadff0;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(6px);
+    overflow-y: auto;
+  }
+
+  .barra-lateral .marca {
+    margin-bottom: 26px;
+    padding: 0 8px;
+    font-size: 22px;
+  }
+
+  .barra-lateral .marca img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .interior .barra-lateral .btn-crear {
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 22px;
+    border-radius: 12px;
+    padding: 12px 18px;
+  }
+
+  .barra-lateral nav {
+    display: grid;
+    gap: 4px;
+  }
+
+  .barra-lateral nav a,
+  .barra-lateral-pie > a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 12px;
+    padding: 13px 14px;
+    color: #5a5560;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .barra-lateral nav a:hover,
+  .barra-lateral-pie > a:hover {
+    color: var(--ink);
+  }
+
+  .barra-lateral nav a.active,
+  .barra-lateral-pie > a.active {
+    background: #fbe9df;
+    color: #b84a1e;
+  }
+
+  .barra-lateral nav svg,
+  .barra-lateral-pie > a svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .barra-lateral-pie {
+    display: grid;
+    gap: 4px;
+    margin-top: auto;
+    border-top: 1px solid var(--borde);
+    padding-top: 14px;
+  }
+
+  .barra-lateral-pie > a {
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+
+  .barra-lateral .usuario-boton {
+    width: 100%;
+    gap: 12px;
+    padding: 8px 14px;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .barra-lateral .usuario-inicial {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+
+  .barra-lateral .usuario-nombre {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .barra-lateral .usuario-flecha {
+    flex: none;
+    transform: rotate(180deg);
+  }
+
+  /* En la barra lateral el menú del usuario se abre hacia arriba. */
+  .barra-lateral .usuario-menu {
+    top: auto;
+    right: auto;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 214px;
+  }
+
+  .contenido {
+    max-width: 1160px;
+    margin: 0;
+    padding: 40px 52px 80px;
+  }
+}
+
+/* Tarjetas translúcidas con el abejorro */
+
+.vidrio {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(6px);
+}
+
+.franja {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 26px;
+}
+
+.franja img {
+  flex: none;
+}
+
+.franja div {
+  flex: 1;
+  min-width: 0;
+}
+
+.franja strong {
+  display: block;
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.interior .franja p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.interior .franja a {
+  flex: none;
+  color: #b84a1e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.interior .franja a:hover {
+  text-decoration: underline;
+}
+
+.franja-eventos {
+  margin-top: 62px;
+}
+
+/* El abejorro se asoma por encima del borde de la franja. */
+.franja-eventos img {
+  width: 140px;
+  margin: -66px 0 -4px;
+}
+
+.franja-progreso {
+  margin-bottom: 18px;
+}
+
+.franja-progreso img {
+  width: 170px;
+}
+
+.franja-progreso > b {
+  flex: none;
+  color: var(--ink);
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Hoy: columna derecha y tarjeta "Tu día" */
+
+.hoy-derecha {
+  display: grid;
+  gap: 16px;
+}
+
+.interior .hoy .stats-grid {
+  margin-top: 0;
+}
+
+.tu-dia {
+  padding: 18px 20px;
+}
+
+.tu-dia-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tu-dia-cabecera img {
+  flex: none;
+  width: 104px;
+}
+
+.tu-dia h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.interior .tu-dia p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.tu-dia .avance-pista {
+  margin: 14px 0 8px;
+}
+
+.tu-dia.lleno .avance-relleno {
+  background: #a3283e;
+}
+
+/* Configuración: formulario y tarjeta de adorno al lado */
+
+.config {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 28px;
+  align-items: start;
+}
+
+.config-adorno {
+  padding: 16px 18px 20px;
+  text-align: center;
+}
+
+.config-adorno img {
+  width: 100%;
+  max-width: 260px;
+}
+
+.config-adorno strong {
+  display: block;
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.interior .config-adorno p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 /* Celular y tablet */
 
 @media (max-width: 900px) {
@@ -1270,6 +1583,19 @@
 
   .hoy {
     grid-template-columns: 1fr;
+  }
+
+  .config {
+    grid-template-columns: 1fr;
+  }
+
+  .franja {
+    flex-wrap: wrap;
+    padding: 14px 18px;
+  }
+
+  .franja-progreso img {
+    width: 120px;
   }
 
   .lateral {
