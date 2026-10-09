@@ -732,6 +732,11 @@
   color: var(--muted);
 }
 
+.proximo .sin-gestiones {
+  display: block;
+  color: var(--today);
+}
+
 /* Estados: vacío, error */
 
 .interior .hoy-state,
