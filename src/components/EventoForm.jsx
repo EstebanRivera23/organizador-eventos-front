@@ -8,7 +8,9 @@ import Campo from "./Campo";
 const CAMPOS = [
   "nombre",
   "tipo",
-  "cliente_contacto",
+  "cliente_nombre",
+  "cliente_telefono",
+  "cliente_correo",
   "fecha_hora",
   "lugar",
   "plazo_limite",
@@ -18,7 +20,10 @@ function valoresIniciales(evento) {
   return {
     nombre: evento?.nombre ?? "",
     tipo: evento?.tipo ?? "",
-    cliente_contacto: evento?.cliente_contacto ?? "",
+    // Los eventos de antes solo tenían un texto de contacto: va como nombre.
+    cliente_nombre: evento?.cliente_nombre ?? evento?.cliente_contacto ?? "",
+    cliente_telefono: evento?.cliente_telefono ?? "",
+    cliente_correo: evento?.cliente_correo ?? "",
     fecha_hora: aInputFechaHora(evento?.fecha_hora),
     lugar: evento?.lugar ?? "",
     plazo_limite: aInputFecha(evento?.plazo_limite),
@@ -95,12 +100,12 @@ function EventoForm({ evento, textoBoton, onSubmit, onCancelar }) {
         </Campo>
 
         <Campo
-          label="Contacto del cliente"
-          name="cliente_contacto"
-          placeholder="Nombre, teléfono o correo"
-          value={valores.cliente_contacto}
+          label="Lugar"
+          name="lugar"
+          placeholder="Ejemplo: Hacienda El Roble"
+          value={valores.lugar}
           onChange={handleChange}
-          error={errores.cliente_contacto}
+          error={errores.lugar}
         />
       </div>
 
@@ -126,13 +131,39 @@ function EventoForm({ evento, textoBoton, onSubmit, onCancelar }) {
       </div>
 
       <Campo
-        label="Lugar"
-        name="lugar"
-        placeholder="Ejemplo: Hacienda El Roble"
-        value={valores.lugar}
+        label="Nombre del cliente"
+        name="cliente_nombre"
+        placeholder="Ejemplo: Ana Gómez"
+        autoComplete="off"
+        value={valores.cliente_nombre}
         onChange={handleChange}
-        error={errores.lugar}
+        error={errores.cliente_nombre}
       />
+
+      <div className="form-row">
+        <Campo
+          type="tel"
+          label="Teléfono del cliente"
+          name="cliente_telefono"
+          placeholder="Ejemplo: 300 123 4567"
+          autoComplete="off"
+          ayuda="Escribe el teléfono, el correo o los dos."
+          value={valores.cliente_telefono}
+          onChange={handleChange}
+          error={errores.cliente_telefono}
+        />
+
+        <Campo
+          type="email"
+          label="Correo del cliente"
+          name="cliente_correo"
+          placeholder="Ejemplo: ana@correo.com"
+          autoComplete="off"
+          value={valores.cliente_correo}
+          onChange={handleChange}
+          error={errores.cliente_correo}
+        />
+      </div>
 
       <div className="form-actions">
         {onCancelar && (
