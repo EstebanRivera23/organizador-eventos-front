@@ -14,8 +14,12 @@ import "./App.css";
 function Progreso() {
   return (
     <Layout>
-      <section className="content-card">
-        <p className="eyebrow">Seguimiento</p>
+      <header className="encabezado">
+        <h1>Progreso</h1>
+        <p className="sub">Cómo va cada evento que organizas.</p>
+      </header>
+
+      <section className="panel panel-relleno formulario">
         <h2>Progreso del evento</h2>
         <p>
           Barra inicial para visualizar el avance de preparación del evento.
