@@ -2,6 +2,9 @@
 export const TIPOS_EVENTO = [
   { value: "Boda", label: "Boda" },
   { value: "Cumpleaños", label: "Cumpleaños" },
+  { value: "Social", label: "Social" },
+  { value: "Corporativo", label: "Corporativo" },
+  { value: "Otro", label: "Otro" },
 ];
 
 // Mismo rango que valida el backend en /api/organizador/limite-diario/.
