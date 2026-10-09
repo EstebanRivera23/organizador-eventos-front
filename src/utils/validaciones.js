@@ -2,6 +2,14 @@ import { LIMITE_DIARIO } from "../constants";
 
 const estaVacio = (valor) => String(valor ?? "").trim() === "";
 
+const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Solo números, espacios, +, - y paréntesis, con 7 a 15 dígitos en total.
+function esTelefono(texto) {
+  const digitos = texto.replace(/\D/g, "").length;
+  return /^[\d\s+\-()]+$/.test(texto) && digitos >= 7 && digitos <= 15;
+}
+
 export function validarEvento(valores) {
   const errores = {};
 
@@ -11,8 +19,21 @@ export function validarEvento(valores) {
   if (estaVacio(valores.tipo)) {
     errores.tipo = "Selecciona el tipo de evento.";
   }
-  if (estaVacio(valores.cliente_contacto)) {
-    errores.cliente_contacto = "El contacto del cliente es obligatorio.";
+  if (estaVacio(valores.cliente_nombre)) {
+    errores.cliente_nombre = "El nombre del cliente es obligatorio.";
+  }
+
+  const telefono = String(valores.cliente_telefono ?? "").trim();
+  const correo = String(valores.cliente_correo ?? "").trim();
+  if (!telefono && !correo) {
+    errores.cliente_telefono =
+      "Agrega un teléfono o un correo para contactar al cliente.";
+  }
+  if (telefono && !esTelefono(telefono)) {
+    errores.cliente_telefono = "Escribe un teléfono válido, de 7 a 15 dígitos.";
+  }
+  if (correo && !CORREO_VALIDO.test(correo)) {
+    errores.cliente_correo = "Escribe un correo válido.";
   }
   if (estaVacio(valores.fecha_hora)) {
     errores.fecha_hora = "Indica la fecha y hora del evento.";
@@ -80,7 +101,7 @@ export function validarRegistro(valores) {
   }
   if (estaVacio(valores.email)) {
     errores.email = "Escribe tu correo.";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valores.email.trim())) {
+  } else if (!CORREO_VALIDO.test(valores.email.trim())) {
     errores.email = "Escribe un correo válido, por ejemplo ana@correo.com.";
   }
   if (String(valores.password ?? "").length < 6) {

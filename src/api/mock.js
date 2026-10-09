@@ -17,7 +17,10 @@ let eventos = [
     id: 1,
     nombre: "Boda de Ana y Luis",
     tipo: "Boda",
-    cliente_contacto: "Ana Gómez - 300 123 4567",
+    cliente_contacto: "Ana Gómez · 300 123 4567",
+    cliente_nombre: "Ana Gómez",
+    cliente_telefono: "300 123 4567",
+    cliente_correo: "",
     fecha_hora: "2026-11-14T17:00",
     lugar: "Hacienda El Roble",
     plazo_limite: "2026-11-07",
@@ -26,7 +29,10 @@ let eventos = [
     id: 2,
     nombre: "Cumpleaños de Laura",
     tipo: "Cumpleaños",
-    cliente_contacto: "laura@correo.com",
+    cliente_contacto: "Laura Pérez · laura@correo.com",
+    cliente_nombre: "Laura Pérez",
+    cliente_telefono: "",
+    cliente_correo: "laura@correo.com",
     fecha_hora: "2026-10-20T19:30",
     lugar: "Salón Las Palmas",
     plazo_limite: "2026-10-15",
@@ -116,8 +122,15 @@ export function obtenerEvento(id) {
   return evento ? responder(evento) : noEncontrado();
 }
 
+// Igual que el backend: el texto único de contacto se arma con los tres campos.
+const contactoDe = (evento) =>
+  [evento.cliente_nombre, evento.cliente_telefono, evento.cliente_correo]
+    .filter(Boolean)
+    .join(" · ");
+
 export function crearEvento(datos) {
   const evento = { id: siguienteEventoId++, ...datos };
+  evento.cliente_contacto = contactoDe(evento);
   eventos = [...eventos, evento];
   return responder(evento);
 }
@@ -127,6 +140,7 @@ export function actualizarEvento(id, datos) {
   if (!actual) return noEncontrado();
 
   const actualizado = { ...actual, ...datos, id: actual.id };
+  actualizado.cliente_contacto = contactoDe(actualizado);
   eventos = eventos.map((evento) =>
     evento.id === actual.id ? actualizado : evento,
   );
