@@ -162,6 +162,53 @@ export function crearSubtarea(eventoId, datos) {
 
 const sinCeros = (horas) => String(Number(Number(horas).toFixed(2)));
 
+// Horas sin finalizar planificadas para un día, sin contar una gestión.
+function horasDelDia(fecha, sinId) {
+  return subtareas
+    .filter(
+      (subtarea) =>
+        subtarea.id !== sinId &&
+        subtarea.estado !== "finalizado" &&
+        subtarea.fecha_objetivo === fecha,
+    )
+    .reduce((total, subtarea) => total + Number(subtarea.horas_estimadas), 0);
+}
+
+function sumarDias(fecha, dias) {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  const nueva = new Date(anio, mes - 1, dia + dias);
+  const dosDigitos = (n) => String(n).padStart(2, "0");
+  return `${nueva.getFullYear()}-${dosDigitos(nueva.getMonth() + 1)}-${dosDigitos(nueva.getDate())}`;
+}
+
+// Igual que el backend: los 3 días más cercanos donde la gestión cabe, sin
+// días que ya pasaron ni posteriores al evento.
+function sugerirFechas(gestion, fecha, horas) {
+  const hoy = enDias(0);
+  const diaDelEvento = String(buscarEvento(gestion.evento)?.fecha_hora).slice(0, 10);
+  const sugeridas = [];
+
+  for (let distancia = 1; distancia <= 14 && sugeridas.length < 3; distancia++) {
+    for (const candidata of [
+      sumarDias(fecha, distancia),
+      sumarDias(fecha, -distancia),
+    ]) {
+      if (candidata < hoy || candidata > diaDelEvento) continue;
+      const planificadas = horasDelDia(candidata, gestion.id) + horas;
+      if (planificadas <= limiteHorasDia) {
+        sugeridas.push({
+          fecha: candidata,
+          horas_planificadas: planificadas.toFixed(2),
+        });
+      }
+    }
+  }
+
+  return sugeridas
+    .slice(0, 3)
+    .sort((a, b) => a.fecha.localeCompare(b.fecha));
+}
+
 // Misma regla que PATCH /api/subtareas/<id>/: si el cambio le agrega horas a
 // un día y el total pasa del límite diario, no guarda y responde 409.
 export function actualizarSubtarea(id, cambios) {
@@ -181,14 +228,7 @@ export function actualizarSubtarea(id, cambios) {
       : 0;
 
   if (nueva.estado !== "finalizado" && horas > horasAntes) {
-    const otras = subtareas
-      .filter(
-        (subtarea) =>
-          subtarea.id !== actual.id &&
-          subtarea.estado !== "finalizado" &&
-          subtarea.fecha_objetivo === nueva.fecha_objetivo,
-      )
-      .reduce((total, subtarea) => total + Number(subtarea.horas_estimadas), 0);
+    const otras = horasDelDia(nueva.fecha_objetivo, actual.id);
     const planificadas = otras + horas;
 
     if (planificadas > limiteHorasDia) {
@@ -203,6 +243,12 @@ export function actualizarSubtarea(id, cambios) {
             excede_por: (planificadas - limiteHorasDia).toFixed(2),
             horas_otras_gestiones: otras.toFixed(2),
             horas_gestion: horas.toFixed(2),
+            horas_disponibles: Math.max(0, limiteHorasDia - otras).toFixed(2),
+            fechas_sugeridas: sugerirFechas(
+              actual,
+              nueva.fecha_objetivo,
+              horas,
+            ),
           },
         }),
       );
@@ -212,7 +258,14 @@ export function actualizarSubtarea(id, cambios) {
   subtareas = subtareas.map((subtarea) =>
     subtarea.id === actual.id ? nueva : subtarea,
   );
-  return responder(nueva);
+  return responder({
+    ...nueva,
+    carga_dia: {
+      fecha: nueva.fecha_objetivo,
+      horas_planificadas: horasDelDia(nueva.fecha_objetivo).toFixed(2),
+      limite_horas_dia: limiteHorasDia.toFixed(2),
+    },
+  });
 }
 
 // Misma agrupación y orden que GET /api/subtareas/hoy/: no incluye las
