@@ -116,8 +116,9 @@ function EventoForm({ evento, textoBoton, onSubmit, onCancelar }) {
 
         <Campo
           type="date"
-          label="Plazo límite"
+          label="Fecha límite de preparación"
           name="plazo_limite"
+          ayuda="Día en que todo debe estar listo antes del evento."
           value={valores.plazo_limite}
           onChange={handleChange}
           error={errores.plazo_limite}

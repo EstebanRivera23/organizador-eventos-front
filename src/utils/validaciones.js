@@ -21,7 +21,13 @@ export function validarEvento(valores) {
     errores.lugar = "El lugar del evento es obligatorio.";
   }
   if (estaVacio(valores.plazo_limite)) {
-    errores.plazo_limite = "Indica el plazo límite.";
+    errores.plazo_limite = "Indica la fecha límite de preparación.";
+  } else if (
+    !estaVacio(valores.fecha_hora) &&
+    valores.plazo_limite > String(valores.fecha_hora).slice(0, 10)
+  ) {
+    // Las dos fechas vienen como AAAA-MM-DD, así que se comparan como texto.
+    errores.plazo_limite = "La fecha límite no puede ser después del evento.";
   }
 
   return errores;
