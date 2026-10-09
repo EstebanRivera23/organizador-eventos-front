@@ -57,16 +57,20 @@ function Login() {
 
   return (
     <main className="login-page">
-      <div className="login-brand">
-        <img src={logo} alt="" width="38" height="38" />
-        <span className="login-brand-name">
-          Event<span>Flow</span>
-        </span>
-      </div>
-
-      <header className="login-header">
-        <h1>Organizador de Eventos Independientes</h1>
+      <header className="login-brand">
+        <img src={logo} alt="" width="40" height="40" />
+        <div>
+          <span className="login-brand-name">
+            Event<span>Flow</span>
+          </span>
+          <h1>Organizador de Eventos Independientes</h1>
+        </div>
       </header>
+
+      <p className="login-lema">
+        Organiza <span aria-hidden="true">·</span> Prioriza{" "}
+        <span aria-hidden="true">·</span> Cumple
+      </p>
 
       <section className="login-card">
         <h2>Iniciar sesión</h2>

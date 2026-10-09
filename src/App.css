@@ -379,20 +379,11 @@ a:focus {
 }
 
 /* La abeja solo sale en pantallas anchas y apaisadas; en las demás quedaría
-   detrás del título o de la tarjeta. */
+   detrás de la frase o de la tarjeta. */
 
-@media (min-width: 1360px) and (min-aspect-ratio: 16 / 10) {
+@media (min-width: 1280px) and (min-aspect-ratio: 5 / 4) {
   .login-page {
     background-image: url("./assets/brand/login-art.svg");
-  }
-}
-
-/* En pantallas 16:10 la abeja queda más cerca del centro: se corre un poco a
-   la derecha para que no toque la tarjeta. */
-
-@media (min-width: 1360px) and (min-aspect-ratio: 16 / 10) and (max-aspect-ratio: 17 / 10) {
-  .login-page {
-    background-position: right -30px center;
   }
 }
 
@@ -406,8 +397,10 @@ a:focus {
 }
 
 .login-brand-name {
+  display: block;
   font-size: 22px;
   font-weight: 800;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: #211c2f;
 }
@@ -416,14 +409,27 @@ a:focus {
   color: var(--primary-dark);
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 24px;
+/* El nombre del proyecto es el título de la página, pero va en pequeño
+   debajo de la marca para que la atención quede en la tarjeta. */
+
+.login-brand h1 {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4b5563;
 }
 
-.login-header h1 {
-  margin: 0;
-  font-size: 30px;
+.login-lema {
+  margin: 0 0 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+  text-align: center;
+}
+
+.login-lema span {
+  margin: 0 6px;
+  color: var(--accent);
 }
 
 .login-card {
