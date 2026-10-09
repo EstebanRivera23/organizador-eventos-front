@@ -268,6 +268,17 @@ export function actualizarSubtarea(id, cambios) {
   });
 }
 
+export function eliminarSubtarea(id) {
+  if (!subtareas.some((subtarea) => subtarea.id === Number(id))) {
+    return Promise.reject(
+      new ApiError(404, { detail: "Subtarea no encontrada." }),
+    );
+  }
+
+  subtareas = subtareas.filter((subtarea) => subtarea.id !== Number(id));
+  return responder(null);
+}
+
 // Misma agrupación y orden que GET /api/subtareas/hoy/: no incluye las
 // finalizadas; ordena por fecha objetivo y, en empate, por menos horas.
 export function obtenerGestionesHoy({ eventoId, estado } = {}) {

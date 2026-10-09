@@ -28,6 +28,9 @@ const api = {
   actualizarSubtarea: (id, cambios) =>
     request(`/api/subtareas/${id}/`, { method: "PATCH", body: cambios }),
 
+  eliminarSubtarea: (id) =>
+    request(`/api/subtareas/${id}/`, { method: "DELETE" }),
+
   // Gestiones agrupadas en vencidas / para_hoy / proximas, ya ordenadas.
   // Los filtros son opcionales: { eventoId, estado }.
   obtenerGestionesHoy: ({ eventoId, estado } = {}) => {
@@ -49,5 +52,6 @@ export const {
   listarSubtareas,
   crearSubtarea,
   actualizarSubtarea,
+  eliminarSubtarea,
   obtenerGestionesHoy,
 } = USE_MOCK ? mock : api;
