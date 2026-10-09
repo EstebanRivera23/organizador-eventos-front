@@ -33,6 +33,16 @@ export function formatearFecha(valor) {
   return leerFecha(valor).toLocaleDateString("es", { dateStyle: "medium" });
 }
 
+// Con el día de la semana, para elegir entre varias fechas: "lunes, 12 oct".
+export function formatearFechaConDia(valor) {
+  if (!valor) return "—";
+  return leerFecha(valor).toLocaleDateString("es", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+  });
+}
+
 export function formatearFechaHora(valor) {
   if (!valor) return "—";
   return leerFecha(valor).toLocaleString("es", {

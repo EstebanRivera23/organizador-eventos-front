@@ -14,6 +14,7 @@ import ReprogramarDialog from "../components/ReprogramarDialog";
 import SubtareaForm from "../components/SubtareaForm";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { formatearFecha, formatearFechaHora } from "../utils/fechas";
+import { mensajeReprogramada } from "../utils/gestiones";
 
 function EventoDetalle() {
   const { id } = useParams();
@@ -90,9 +91,7 @@ function EventoDetalle() {
         subtarea.id === actualizada.id ? actualizada : subtarea,
       ),
     }));
-    setMensajeSubtareas(
-      `Listo. "${actualizada.titulo}" quedó para el ${formatearFecha(actualizada.fecha_objetivo)}, con ${Number(actualizada.horas_estimadas)} h ${Number(actualizada.horas_estimadas) === 1 ? "estimada" : "estimadas"}.`,
-    );
+    setMensajeSubtareas(mensajeReprogramada(actualizada));
   }
 
   async function confirmarEliminar() {

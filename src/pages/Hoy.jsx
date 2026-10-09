@@ -6,6 +6,7 @@ import ReglaOrden from "../components/ReglaOrden";
 import ReprogramarDialog from "../components/ReprogramarDialog";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { diasEntre, formatearFecha } from "../utils/fechas";
+import { mensajeReprogramada } from "../utils/gestiones";
 
 // El orden de los grupos y de las gestiones dentro de cada uno es el que
 // entrega la API; aquí no se reordena nada.
@@ -110,9 +111,7 @@ function Hoy() {
     try {
       const gestiones = await obtenerGestionesHoy();
       setDatos((actuales) => ({ ...actuales, gestiones }));
-      setMensaje(
-        `Listo. "${actualizada.titulo}" quedó para el ${formatearFecha(actualizada.fecha_objetivo)}, con ${Number(actualizada.horas_estimadas)} h ${Number(actualizada.horas_estimadas) === 1 ? "estimada" : "estimadas"}.`,
-      );
+      setMensaje(mensajeReprogramada(actualizada));
     } catch (err) {
       setError(err.message);
     }
