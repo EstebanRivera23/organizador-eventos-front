@@ -381,9 +381,51 @@ a:focus {
 /* La abeja solo sale en pantallas anchas y apaisadas; en las demás quedaría
    detrás de la frase o de la tarjeta. */
 
-@media (min-width: 1280px) and (min-aspect-ratio: 5 / 4) {
+@media (min-width: 1280px) and (min-aspect-ratio: 3 / 2) {
   .login-page {
     background-image: url("./assets/brand/login-art.svg");
+  }
+}
+
+/* Fuera del celular la tarjeta y la frase van un 15 % más grandes, para que
+   no se pierdan en el fondo. */
+
+@media (min-width: 700px) {
+  .login-lema {
+    margin-bottom: 20px;
+    font-size: 17px;
+  }
+
+  .login-card {
+    max-width: 600px;
+    padding: 28px;
+  }
+
+  .login-card h2 {
+    font-size: 37px;
+  }
+
+  .login-card > p,
+  .login-card .form-grid label,
+  .login-card .form-grid button {
+    font-size: 18px;
+  }
+
+  .login-card .form-grid {
+    margin-top: 28px;
+    gap: 21px;
+  }
+
+  .login-card .form-grid input {
+    padding: 16px 18px;
+  }
+
+  .login-card .form-grid button {
+    padding: 17px 20px;
+  }
+
+  .login-card .field-error {
+    font-size: 16px;
   }
 }
 
