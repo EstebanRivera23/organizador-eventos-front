@@ -400,7 +400,10 @@ export function login(email, password) {
   );
   if (!cuenta) {
     return Promise.reject(
-      new ApiError(401, { detail: "Credenciales inválidas." }),
+      new ApiError(401, {
+        detail:
+          "Ups, el correo o la contraseña no son correctos. Revisa tus datos e intenta de nuevo.",
+      }),
     );
   }
 
