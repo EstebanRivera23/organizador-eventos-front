@@ -339,40 +339,44 @@ a:focus {
 
 @media (min-width: 1000px) and (min-height: 740px) {
   .login-page:not(.login-page-larga) .login-lema {
-    margin-bottom: 22px;
-    font-size: 20px;
+    margin-bottom: 19px;
+    font-size: 17px;
   }
 
   .login-page:not(.login-page-larga) .login-card {
-    max-width: 690px;
-    padding: 32px;
+    max-width: 586px;
+    padding: 27px;
   }
 
   .login-page:not(.login-page-larga) .login-card h2 {
-    font-size: 42px;
+    font-size: 36px;
   }
 
   .login-page:not(.login-page-larga) .login-card > p,
   .login-page:not(.login-page-larga) .login-card .form-grid label,
   .login-page:not(.login-page-larga) .login-card .form-grid button {
-    font-size: 20px;
+    font-size: 17px;
   }
 
   .login-page:not(.login-page-larga) .login-card .form-grid {
-    margin-top: 32px;
-    gap: 24px;
+    margin-top: 27px;
+    gap: 20px;
   }
 
   .login-page:not(.login-page-larga) .login-card .form-grid input {
-    padding: 18px 20px;
+    padding: 15px 17px;
   }
 
   .login-page:not(.login-page-larga) .login-card .form-grid button {
-    padding: 19px 22px;
+    padding: 16px 19px;
   }
 
   .login-page:not(.login-page-larga) .login-card .field-error {
-    font-size: 17px;
+    font-size: 14.5px;
+  }
+
+  .login-page:not(.login-page-larga) .login-card > .login-enlace {
+    font-size: 14px;
   }
 }
 
