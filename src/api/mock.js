@@ -305,7 +305,7 @@ export function obtenerGestionesHoy({ eventoId, estado } = {}) {
     fecha_actual: hoy,
     filtros: { evento_id: eventoId ?? null, estado: estado ?? null },
     regla:
-      "Se muestran primero las vencidas, luego las de hoy y despues las proximas. En empate se prioriza menor esfuerzo estimado.",
+      "Se muestran primero las vencidas, luego las de hoy y después las próximas. Dentro de cada grupo van por fecha objetivo y, si empatan, primero la de menor esfuerzo estimado.",
     vencidas: pendientes
       .filter((subtarea) => subtarea.fecha_objetivo < hoy)
       .sort(porFechaYHoras),
