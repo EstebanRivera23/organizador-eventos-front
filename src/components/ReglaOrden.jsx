@@ -7,8 +7,8 @@ function ReglaOrden() {
       <h2 id="regla-orden-titulo">¿Cómo se ordenan tus gestiones?</h2>
       <ol>
         <li>
-          Primero van las de <strong>hoy</strong>, después las{" "}
-          <strong>vencidas</strong> y al final las <strong>próximas</strong>.
+          Primero van las <strong>vencidas</strong>, después las de{" "}
+          <strong>hoy</strong> y al final las <strong>próximas</strong>.
         </li>
         <li>
           Dentro de cada grupo aparecen por fecha objetivo, de la más antigua
