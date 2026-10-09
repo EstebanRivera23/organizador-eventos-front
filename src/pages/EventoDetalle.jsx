@@ -240,9 +240,21 @@ function EventoDetalle() {
             <dd>{evento.tipo}</dd>
           </div>
           <div>
-            <dt>Contacto del cliente</dt>
-            <dd>{evento.cliente_contacto}</dd>
+            <dt>Cliente</dt>
+            <dd>{evento.cliente_nombre || evento.cliente_contacto}</dd>
           </div>
+          {evento.cliente_telefono && (
+            <div>
+              <dt>Teléfono del cliente</dt>
+              <dd>{evento.cliente_telefono}</dd>
+            </div>
+          )}
+          {evento.cliente_correo && (
+            <div>
+              <dt>Correo del cliente</dt>
+              <dd>{evento.cliente_correo}</dd>
+            </div>
+          )}
           <div>
             <dt>Lugar</dt>
             <dd>{evento.lugar}</dd>
