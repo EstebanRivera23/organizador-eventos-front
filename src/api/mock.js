@@ -1,3 +1,4 @@
+import { numeroDeHoras } from "../utils/horas";
 import { ApiError } from "./client";
 
 // Fecha local (AAAA-MM-DD) a `dias` de distancia de hoy, para que los datos de
@@ -174,8 +175,6 @@ export function crearSubtarea(eventoId, datos) {
   return responder(subtarea);
 }
 
-const sinCeros = (horas) => String(Number(Number(horas).toFixed(2)));
-
 // Horas sin finalizar planificadas para un día, sin contar una gestión.
 function horasDelDia(fecha, sinId) {
   return subtareas
@@ -265,7 +264,7 @@ export function actualizarSubtarea(id, cambios) {
     if (planificadas > limiteHorasDia) {
       return Promise.reject(
         new ApiError(409, {
-          detail: `Quedarías con ${sinCeros(planificadas)}h planificadas (límite ${sinCeros(limiteHorasDia)}h)`,
+          detail: `Quedarías con ${numeroDeHoras(planificadas)}h planificadas (límite ${numeroDeHoras(limiteHorasDia)}h)`,
           codigo: "sobrecarga_diaria",
           conflicto: {
             fecha: nueva.fecha_objetivo,
