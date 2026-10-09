@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { erroresDeApi } from "../api/client";
 import { actualizarLimiteDiario, obtenerLimiteDiario } from "../api/limite";
+import abejorroConfig from "../assets/brand/abejorro-config.svg";
 import Campo from "../components/Campo";
 import Layout from "../components/Layout";
 import { LIMITE_DIARIO } from "../constants";
@@ -99,59 +100,67 @@ function Configuracion() {
         <p className="sub">Ajustes de tu trabajo diario.</p>
       </header>
 
-      <section className="panel panel-relleno formulario">
-        <h2>Límite diario de horas</h2>
-        <p>
-          Es el máximo de horas de gestión que quieres dedicarle a tus eventos
-          en un día. Si al reprogramar una gestión te pasas de este límite, te
-          avisamos antes de guardar.
-        </p>
+      <div className="config">
+        <section className="panel panel-relleno formulario">
+          <h2>Límite diario de horas</h2>
+          <p>
+            Es el máximo de horas de gestión que quieres dedicarle a tus eventos
+            en un día. Si al reprogramar una gestión te pasas de este límite, te
+            avisamos antes de guardar.
+          </p>
 
-        {limite === null ? (
-          <p role="status">Cargando tu límite...</p>
-        ) : (
-          <>
-            <p className="limite-actual">
-              Tu límite actual: <strong>{enHoras(limite)} por día</strong>
-            </p>
+          {limite === null ? (
+            <p role="status">Cargando tu límite...</p>
+          ) : (
+            <>
+              <p className="limite-actual">
+                Tu límite actual: <strong>{enHoras(limite)} por día</strong>
+              </p>
 
-            <form className="form-grid" onSubmit={handleSubmit} noValidate>
-              {errorGeneral && (
-                <p className="alert-error" role="alert">
-                  {errorGeneral}
-                </p>
-              )}
-              {mensajeExito && (
-                <p className="alert-success" role="status">
-                  {mensajeExito}
-                </p>
-              )}
+              <form className="form-grid" onSubmit={handleSubmit} noValidate>
+                {errorGeneral && (
+                  <p className="alert-error" role="alert">
+                    {errorGeneral}
+                  </p>
+                )}
+                {mensajeExito && (
+                  <p className="alert-success" role="status">
+                    {mensajeExito}
+                  </p>
+                )}
 
-              <div className="campo-corto">
-                <Campo
-                  type="number"
-                  inputMode="decimal"
-                  min={LIMITE_DIARIO.minimo}
-                  max={LIMITE_DIARIO.maximo}
-                  step="0.5"
-                  label="Horas por día"
-                  name="limite_horas_dia"
-                  ayuda={`Entre ${LIMITE_DIARIO.minimo} y ${LIMITE_DIARIO.maximo} horas. Si no lo cambias, es ${LIMITE_DIARIO.porDefecto}.`}
-                  value={valor}
-                  onChange={handleChange}
-                  error={errorCampo}
-                />
-              </div>
+                <div className="campo-corto">
+                  <Campo
+                    type="number"
+                    inputMode="decimal"
+                    min={LIMITE_DIARIO.minimo}
+                    max={LIMITE_DIARIO.maximo}
+                    step="0.5"
+                    label="Horas por día"
+                    name="limite_horas_dia"
+                    ayuda={`Entre ${LIMITE_DIARIO.minimo} y ${LIMITE_DIARIO.maximo} horas. Si no lo cambias, es ${LIMITE_DIARIO.porDefecto}.`}
+                    value={valor}
+                    onChange={handleChange}
+                    error={errorCampo}
+                  />
+                </div>
 
-              <div className="form-actions">
-                <button type="submit" disabled={guardando}>
-                  {guardando ? "Guardando..." : "Guardar límite"}
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-      </section>
+                <div className="form-actions">
+                  <button type="submit" disabled={guardando}>
+                    {guardando ? "Guardando..." : "Guardar límite"}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </section>
+
+        <aside className="vidrio config-adorno">
+          <img src={abejorroConfig} alt="" />
+          <strong>Todo a tu medida</strong>
+          <p>Ajusta tu ritmo y la colmena trabaja contigo.</p>
+        </aside>
+      </div>
     </Layout>
   );
 }

@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { listarEventos, obtenerGestionesHoy } from "../api/eventos";
+import { obtenerLimiteDiario } from "../api/limite";
+import abejorroEscudo from "../assets/brand/abejorro-escudo.svg";
 import IconoEstado from "../components/IconoEstado";
 import Layout from "../components/Layout";
 import ReglaOrden from "../components/ReglaOrden";
 import ReprogramarDialog from "../components/ReprogramarDialog";
-import { claseEstado, ESTADOS_FILTRO_HOY, etiquetaEstado } from "../constants";
+import {
+  claseEstado,
+  ESTADOS_FILTRO_HOY,
+  etiquetaEstado,
+  normalizarEstado,
+} from "../constants";
 import {
   diasEntre,
   formatearFecha,
@@ -55,6 +62,44 @@ function textoUrgencia(grupo, fechaObjetivo, fechaActual) {
   return dias === 1 ? "Vence mañana" : `Faltan ${dias} días`;
 }
 
+// Tarjeta "Tu día": cuántas horas hay planificadas para hoy frente al límite
+// diario. Cuenta las gestiones sin finalizar de todos los eventos, igual que
+// el aviso de sobrecarga.
+function TuDia({ horas, limite }) {
+  const libres = limite - horas;
+  const lleno = libres <= 0;
+
+  return (
+    <section
+      className={lleno ? "vidrio tu-dia lleno" : "vidrio tu-dia"}
+      aria-labelledby="tu-dia-titulo"
+    >
+      <div className="tu-dia-cabecera">
+        <img src={abejorroEscudo} alt="" />
+        <div>
+          <h2 id="tu-dia-titulo">Tu día</h2>
+          <p>
+            {enHoras(horas)} de {enHoras(limite)} planificadas
+          </p>
+        </div>
+      </div>
+      <div className="avance-pista" aria-hidden="true">
+        <div
+          className="avance-relleno"
+          style={{ width: `${Math.min(100, (horas / limite) * 100)}%` }}
+        />
+      </div>
+      <p>
+        {libres > 0
+          ? `Te quedan ${enHoras(libres)} libres. Si te pasas, te avisamos.`
+          : libres === 0
+            ? "Tu día está lleno."
+            : `Te pasas ${enHoras(-libres)} del límite.`}
+      </p>
+    </section>
+  );
+}
+
 // Mientras llegan los datos se muestra la silueta de la vista, para que el
 // contenido no "salte" al aparecer.
 function Cargando() {
@@ -99,14 +144,19 @@ function Hoy() {
 
     // La API de /hoy solo trae el id del evento; los nombres salen de la
     // lista de eventos del organizador.
-    Promise.all([obtenerGestionesHoy({ eventoId, estado }), listarEventos()])
-      .then(([gestiones, eventos]) => {
+    // Si el límite diario no carga, la vista sigue: solo no sale "Tu día".
+    Promise.all([
+      obtenerGestionesHoy({ eventoId, estado }),
+      listarEventos(),
+      obtenerLimiteDiario().catch(() => null),
+    ])
+      .then(([gestiones, eventos, limite]) => {
         if (!activo) return;
         const nombres = Object.fromEntries(
           eventos.map((evento) => [evento.id, evento.nombre]),
         );
         setError("");
-        setDatos({ gestiones, nombres, eventos });
+        setDatos({ gestiones, nombres, eventos, limite });
       })
       .catch((err) => activo && setError(err.message));
 
@@ -142,8 +192,11 @@ function Hoy() {
   async function alReprogramar(actualizada) {
     setReprogramando(null);
     try {
-      const gestiones = await obtenerGestionesHoy({ eventoId, estado });
-      setDatos((actuales) => ({ ...actuales, gestiones }));
+      const [gestiones, eventos] = await Promise.all([
+        obtenerGestionesHoy({ eventoId, estado }),
+        listarEventos(),
+      ]);
+      setDatos((actuales) => ({ ...actuales, gestiones, eventos }));
       setMensaje(mensajeReprogramada(actualizada));
     } catch (err) {
       setError(err.message);
@@ -186,7 +239,7 @@ function Hoy() {
     );
   }
 
-  const { gestiones, nombres, eventos } = datos;
+  const { gestiones, nombres, eventos, limite } = datos;
   const hayEventos = eventos.length > 0;
   const cantidad = (clave) => gestiones[clave]?.length ?? 0;
   const urgentes = cantidad("vencidas") + cantidad("para_hoy");
@@ -199,19 +252,31 @@ function Hoy() {
     .sort((a, b) => a.dia.localeCompare(b.dia))
     .slice(0, 3);
 
+  // Horas de hoy sin importar los filtros: salen de las gestiones que el
+  // backend manda dentro de cada evento.
+  const horasDeHoy = eventos
+    .flatMap((evento) => evento.subtareas ?? [])
+    .filter(
+      (gestion) =>
+        gestion.fecha_objetivo === gestiones.fecha_actual &&
+        normalizarEstado(gestion.estado) !== "finalizado",
+    )
+    .reduce((total, gestion) => total + Number(gestion.horas_estimadas), 0);
+  const limiteDiario = Number(limite?.limite_horas_dia);
+  const hayTuDia = limiteDiario > 0;
+  const hayDerecha = proximosEventos.length > 0 || hayTuDia;
+
   return (
     <Layout>
-      <div className={proximosEventos.length > 0 ? "hoy" : "hoy sin-lateral"}>
-        <div>
-          <p className="hoy-dia">
-            {formatearFechaLarga(gestiones.fecha_actual)}
-          </p>
-          <h1 className="hoy-titular">
-            {urgentes > 0
-              ? `Tienes ${plural(urgentes, "gestión", "gestiones")} para atender hoy`
-              : "Gestiones urgentes del día"}
-          </h1>
+      <p className="hoy-dia">{formatearFechaLarga(gestiones.fecha_actual)}</p>
+      <h1 className="hoy-titular">
+        {urgentes > 0
+          ? `Tienes ${plural(urgentes, "gestión", "gestiones")} para atender hoy`
+          : "Gestiones urgentes del día"}
+      </h1>
 
+      <div className={hayDerecha ? "hoy" : "hoy sin-lateral"}>
+        <div>
           <section
             className="panel stats-grid"
             aria-label="Resumen de gestiones"
@@ -411,42 +476,50 @@ function Hoy() {
           )}
         </div>
 
-        {proximosEventos.length > 0 && (
-          <aside className="panel lateral" aria-labelledby="proximos-titulo">
-            <h2 id="proximos-titulo">Próximos eventos</h2>
-            {proximosEventos.map((evento) => {
-              const { dia, mes } = partesDeFecha(evento.dia);
-              const faltan = diasEntre(gestiones.fecha_actual, evento.dia);
+        {hayDerecha && (
+          <div className="hoy-derecha">
+            {proximosEventos.length > 0 && (
+              <aside
+                className="panel lateral"
+                aria-labelledby="proximos-titulo"
+              >
+                <h2 id="proximos-titulo">Próximos eventos</h2>
+                {proximosEventos.map((evento) => {
+                  const { dia, mes } = partesDeFecha(evento.dia);
+                  const faltan = diasEntre(gestiones.fecha_actual, evento.dia);
 
-              return (
-                <Link
-                  key={evento.id}
-                  className="proximo"
-                  to={`/evento/${evento.id}`}
-                >
-                  <span className="dia-mes">
-                    <b>{dia}</b>
-                    <span>{mes}</span>
-                  </span>
-                  <span>
-                    <strong>{evento.nombre}</strong>
-                    <small>
-                      {faltan === 0
-                        ? "Hoy"
-                        : faltan === 1
-                          ? "Mañana"
-                          : `En ${faltan} días`}
-                    </small>
-                    {evento.subtareas?.length === 0 && (
-                      <small className="sin-gestiones">
-                        Sin gestiones todavía
-                      </small>
-                    )}
-                  </span>
-                </Link>
-              );
-            })}
-          </aside>
+                  return (
+                    <Link
+                      key={evento.id}
+                      className="proximo"
+                      to={`/evento/${evento.id}`}
+                    >
+                      <span className="dia-mes">
+                        <b>{dia}</b>
+                        <span>{mes}</span>
+                      </span>
+                      <span>
+                        <strong>{evento.nombre}</strong>
+                        <small>
+                          {faltan === 0
+                            ? "Hoy"
+                            : faltan === 1
+                              ? "Mañana"
+                              : `En ${faltan} días`}
+                        </small>
+                        {evento.subtareas?.length === 0 && (
+                          <small className="sin-gestiones">
+                            Sin gestiones todavía
+                          </small>
+                        )}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </aside>
+            )}
+            {hayTuDia && <TuDia horas={horasDeHoy} limite={limiteDiario} />}
+          </div>
         )}
       </div>
 
