@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 // Modal nativo (<dialog>): bloquea el fondo, atrapa el foco y se cierra con Esc.
 function ConfirmDialog({
@@ -12,6 +12,8 @@ function ConfirmDialog({
   onCancelar,
 }) {
   const ref = useRef(null);
+  // Puede haber más de un diálogo en la misma página: cada uno con su id.
+  const idTitulo = useId();
 
   useEffect(() => {
     const dialog = ref.current;
@@ -28,10 +30,10 @@ function ConfirmDialog({
     <dialog
       ref={ref}
       className="confirm-dialog"
-      aria-labelledby="confirm-dialog-titulo"
+      aria-labelledby={idTitulo}
       onCancel={handleCancel}
     >
-      <h3 id="confirm-dialog-titulo">{titulo}</h3>
+      <h3 id={idTitulo}>{titulo}</h3>
       <p>{mensaje}</p>
 
       {error && (
