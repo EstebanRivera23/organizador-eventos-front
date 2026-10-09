@@ -114,8 +114,14 @@ function buscarEvento(id) {
   return eventos.find((evento) => evento.id === Number(id));
 }
 
+// Como el backend, cada evento de la lista trae sus gestiones.
 export function listarEventos() {
-  return responder(eventos);
+  return responder(
+    eventos.map((evento) => ({
+      ...evento,
+      subtareas: subtareas.filter((subtarea) => subtarea.evento === evento.id),
+    })),
+  );
 }
 
 export function obtenerEvento(id) {

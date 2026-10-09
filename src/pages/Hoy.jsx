@@ -437,6 +437,11 @@ function Hoy() {
                           ? "Mañana"
                           : `En ${faltan} días`}
                     </small>
+                    {evento.subtareas?.length === 0 && (
+                      <small className="sin-gestiones">
+                        Sin gestiones todavía
+                      </small>
+                    )}
                   </span>
                 </Link>
               );
