@@ -232,7 +232,8 @@ function fechaParaPosponer(gestion, fecha, horas) {
 
   for (; candidata <= diaDelEvento; candidata = sumarDias(candidata, 1)) {
     const planificadas = horasDelDia(candidata, gestion.id) + horas;
-    if (planificadas <= limiteHorasDia) {
+    // El día en que la gestión ya está no se propone: no cambiaría nada.
+    if (planificadas <= limiteHorasDia && candidata !== gestion.fecha_objetivo) {
       return { fecha: candidata, horas_planificadas: planificadas.toFixed(2) };
     }
   }
