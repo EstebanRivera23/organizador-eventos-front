@@ -431,6 +431,26 @@ a:focus {
   font-weight: 600;
 }
 
+.field-help {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Campos de un solo número (límite diario): no ocupan todo el ancho */
+
+.campo-corto {
+  max-width: 280px;
+}
+
+.limite-actual {
+  margin: 20px 0 0;
+}
+
+.content-card .limite-actual strong {
+  color: var(--text);
+}
+
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -491,7 +511,8 @@ a:focus {
   color: var(--success);
 }
 
-.form-grid .alert-error {
+.form-grid .alert-error,
+.form-grid .alert-success {
   margin: 0;
 }
 
