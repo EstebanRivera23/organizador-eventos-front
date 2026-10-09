@@ -160,7 +160,9 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
                       type="button"
                       className="btn-suave"
                       disabled={guardando}
-                      onClick={() => guardar({ fecha_objetivo: sugerida.fecha })}
+                      onClick={() =>
+                        guardar({ fecha_objetivo: sugerida.fecha })
+                      }
                     >
                       <strong>{formatearFechaConDia(sugerida.fecha)}</strong>
                       <span>
@@ -188,7 +190,9 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
 
             <Campo
               type="date"
-              label={sugeridas?.length > 0 ? "O elige otra fecha" : "Nueva fecha"}
+              label={
+                sugeridas?.length > 0 ? "O elige otra fecha" : "Nueva fecha"
+              }
               name="fecha_objetivo"
               value={fecha}
               onChange={(e) => {
@@ -217,19 +221,37 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
 
       {paso === "conflicto" && (
         <div>
-          <h3 id="reprogramar-titulo" ref={tituloRef} tabIndex={-1}>
+          <h3
+            id="reprogramar-titulo"
+            className="conflicto-alerta"
+            ref={tituloRef}
+            tabIndex={-1}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 3.5 2.5 20h19L12 3.5z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M12 10v4.5"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+              <circle cx="12" cy="17.2" r="1.2" fill="currentColor" />
+            </svg>
             Ese día quedaría sobrecargado
           </h3>
 
           <p className="conflicto-cifras" role="alert">
             {conflicto.mensaje}
           </p>
-          <p>
-            El {formatearFecha(conflicto.fecha)} ya tienes{" "}
-            {enHoras(conflicto.horas_otras_gestiones)} en otras gestiones y{" "}
-            <strong>{gestion.titulo}</strong> suma{" "}
-            {enHoras(conflicto.horas_gestion)}. Todavía no se guardó ningún
-            cambio.
+          <p className="conflicto-detalle">
+            Ese día ya tienes {enHoras(conflicto.horas_otras_gestiones)}{" "}
+            ocupadas. No caben {enHoras(conflicto.horas_gestion)} más.
           </p>
 
           {errorGeneral && (
@@ -266,7 +288,7 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
               >
                 {guardando
                   ? "Guardando..."
-                  : `Posponer para el ${formatearFechaConDia(posponer.fecha)}`}
+                  : "Posponer al siguiente día disponible"}
               </button>
             )}
             <button
@@ -275,19 +297,12 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
               onClick={cerrar}
               disabled={guardando}
             >
-              Cancelar y dejarla como estaba
+              Cancelar
             </button>
           </div>
-          {posponer && (
-            <p className="field-help">
-              Posponer la pasa al siguiente día donde sí te cabe: quedarías con{" "}
-              {enHoras(posponer.horas_planificadas)}.
-            </p>
-          )}
           {posponer === null && (
             <p className="field-help">
-              No se puede posponer: no hay un día posterior con espacio antes
-              del evento.
+              No hay un día disponible para posponer antes del evento.
             </p>
           )}
         </div>
