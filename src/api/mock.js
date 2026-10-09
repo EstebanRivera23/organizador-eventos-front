@@ -209,6 +209,23 @@ function sugerirFechas(gestion, fecha, horas) {
     .sort((a, b) => a.fecha.localeCompare(b.fecha));
 }
 
+// Igual que el backend: el primer día posterior donde la gestión cabe, sin
+// pasar del día del evento.
+function fechaParaPosponer(gestion, fecha, horas) {
+  const hoy = enDias(0);
+  const diaDelEvento = String(buscarEvento(gestion.evento)?.fecha_hora).slice(0, 10);
+  let candidata = sumarDias(fecha, 1);
+  if (candidata < hoy) candidata = hoy;
+
+  for (; candidata <= diaDelEvento; candidata = sumarDias(candidata, 1)) {
+    const planificadas = horasDelDia(candidata, gestion.id) + horas;
+    if (planificadas <= limiteHorasDia) {
+      return { fecha: candidata, horas_planificadas: planificadas.toFixed(2) };
+    }
+  }
+  return null;
+}
+
 // Misma regla que PATCH /api/subtareas/<id>/: si el cambio le agrega horas a
 // un día y el total pasa del límite diario, no guarda y responde 409.
 export function actualizarSubtarea(id, cambios) {
@@ -245,6 +262,11 @@ export function actualizarSubtarea(id, cambios) {
             horas_gestion: horas.toFixed(2),
             horas_disponibles: Math.max(0, limiteHorasDia - otras).toFixed(2),
             fechas_sugeridas: sugerirFechas(
+              actual,
+              nueva.fecha_objetivo,
+              horas,
+            ),
+            fecha_posponer: fechaParaPosponer(
               actual,
               nueva.fecha_objetivo,
               horas,
