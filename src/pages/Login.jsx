@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Campo from "../components/Campo";
 import { erroresDeApi } from "../api/client";
+import logo from "../assets/brand/logo-eventflow.svg";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -56,10 +57,20 @@ function Login() {
 
   return (
     <main className="login-page">
-      <header className="login-header">
-        <p className="eyebrow">Panel de gestión</p>
-        <h1>Organizador de Eventos Independientes</h1>
+      <header className="login-brand">
+        <img src={logo} alt="" width="40" height="40" />
+        <div>
+          <span className="login-brand-name">
+            Event<span>Flow</span>
+          </span>
+          <h1>Organizador de Eventos Independientes</h1>
+        </div>
       </header>
+
+      <p className="login-lema">
+        Organiza <span aria-hidden="true">·</span> Prioriza{" "}
+        <span aria-hidden="true">·</span> Cumple
+      </p>
 
       <section className="login-card">
         <h2>Iniciar sesión</h2>

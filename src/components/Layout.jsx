@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { USE_MOCK } from "../api/client";
+import logo from "../assets/brand/logo-eventflow.svg";
 import { useAuth } from "../context/AuthContext";
 
 function Layout({ children }) {
@@ -15,7 +16,7 @@ function Layout({ children }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-icon">OE</div>
+          <img className="brand-icon" src={logo} alt="" width="40" height="40" />
           <div>
             <h2>EventFlow</h2>
             <p>Organizador de eventos</p>
@@ -36,7 +37,6 @@ function Layout({ children }) {
       <section className="main-area">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Panel de gestión</p>
             <h1>Organizador de Eventos Independientes</h1>
           </div>
 
