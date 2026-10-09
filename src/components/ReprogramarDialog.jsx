@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { ApiError, erroresDeApi } from "../api/client";
 import { actualizarSubtarea } from "../api/eventos";
 import { formatearFecha, formatearFechaConDia } from "../utils/fechas";
+import { enHoras } from "../utils/horas";
 import Campo from "./Campo";
-
-const enHoras = (horas) => `${Number(horas)} h`;
 
 // Diálogo para cambiar la fecha de una gestión. Si el día elegido queda por
 // encima del límite diario, el backend responde 409 con las cifras y aquí se

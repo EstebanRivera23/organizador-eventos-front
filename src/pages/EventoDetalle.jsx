@@ -18,6 +18,7 @@ import SubtareaForm from "../components/SubtareaForm";
 import { claseEstado, etiquetaEstado } from "../constants";
 import { formatearFecha, formatearFechaHora } from "../utils/fechas";
 import { mensajeReprogramada } from "../utils/gestiones";
+import { enHoras } from "../utils/horas";
 
 function EventoDetalle() {
   const { id } = useParams();
@@ -284,7 +285,7 @@ function EventoDetalle() {
               {subtareas.length === 1
                 ? "1 gestión"
                 : `${subtareas.length} gestiones`}
-              , {horasTotales} h estimadas
+              , {enHoras(horasTotales)} estimadas
             </span>
           )}
         </div>
@@ -317,7 +318,7 @@ function EventoDetalle() {
                     {subtarea.descripcion && <p>{subtarea.descripcion}</p>}
                     <small>
                       {formatearFecha(subtarea.fecha_objetivo)} ·{" "}
-                      {subtarea.horas_estimadas} h
+                      {enHoras(subtarea.horas_estimadas)}
                     </small>
                   </div>
                   <div className="subtask-acciones">

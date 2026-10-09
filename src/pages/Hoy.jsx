@@ -14,6 +14,7 @@ import {
   soloFecha,
 } from "../utils/fechas";
 import { mensajeReprogramada } from "../utils/gestiones";
+import { enHoras } from "../utils/horas";
 
 // Los grupos se muestran en este orden: primero lo vencido, después lo de
 // hoy y al final lo próximo. El orden de las gestiones dentro de cada grupo
@@ -386,7 +387,7 @@ function Hoy() {
                                 )}
                               </b>
                               {formatearFecha(gestion.fecha_objetivo)} ·{" "}
-                              {Number(gestion.horas_estimadas)} h
+                              {enHoras(gestion.horas_estimadas)}
                             </div>
                             <button
                               type="button"
