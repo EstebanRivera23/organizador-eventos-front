@@ -509,6 +509,7 @@
 }
 
 .interior .hoy-filtros {
+  gap: 12px;
   margin: 22px 0 0;
 }
 
@@ -518,13 +519,33 @@
   color: var(--ink);
 }
 
-.interior .hoy-filtros select {
+/* Los dos desplegables y "Limpiar filtros" miden lo mismo de alto para que
+   queden en una sola línea. */
+.interior .hoy-filtros select,
+.interior .hoy-filtros .btn-suave {
+  height: 40px;
   border: 1px solid var(--rule2);
   border-radius: 10px;
-  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+}
+
+.interior .hoy-filtros select {
+  padding: 0 12px;
   background: var(--white);
   color: var(--text);
-  font: inherit;
+  font-weight: 400;
+}
+
+.interior .hoy-filtros .btn-suave {
+  padding: 0 14px;
+  background: none;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.interior .hoy-filtros .btn-suave:hover {
+  background: var(--white);
 }
 
 .interior .aviso-suelto {
@@ -1327,5 +1348,13 @@
 
   .barra-inferior a.active {
     color: var(--cta);
+  }
+}
+
+/* En celular los filtros van uno debajo del otro, a todo el ancho. */
+@media (max-width: 600px) {
+  .interior .hoy-filtros label,
+  .interior .hoy-filtros select {
+    width: 100%;
   }
 }
