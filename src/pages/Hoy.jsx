@@ -314,8 +314,8 @@ function Hoy() {
               </h2>
               <p>
                 {hayEventos
-                  ? "Estás al día. Cuando agregues subtareas a tus eventos, aquí las verás ordenadas por urgencia."
-                  : "Crea tu primer evento y agrégale subtareas para verlas aquí ordenadas por urgencia."}
+                  ? "Estás al día. Cuando agregues gestiones a tus eventos, aquí las verás ordenadas por urgencia."
+                  : "Crea tu primer evento y agrégale gestiones para verlas aquí ordenadas por urgencia."}
               </p>
               <div className="hoy-state-actions">
                 <Link className="btn-link" to="/crear">
