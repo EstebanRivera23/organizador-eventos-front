@@ -824,6 +824,49 @@ a:focus {
   box-shadow: var(--shadow);
 }
 
+/* Filtros de la vista Hoy */
+
+.hoy-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+  margin: 24px 0 22px;
+}
+
+.hoy-filtros label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.hoy-filtros select {
+  min-width: 210px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 14px;
+  background: var(--panel);
+  font-weight: 400;
+}
+
+.hoy-filtros .btn-suave {
+  padding: 11px 14px;
+}
+
+.hoy-filtros p {
+  flex-basis: 100%;
+  margin: 0;
+  min-height: 1.2em;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.hoy-state-actions .btn-suave {
+  padding: 13px 18px;
+  font-size: 16px;
+}
+
 /* Diálogo de reprogramar y de conflicto por sobrecarga */
 
 .reprogramar-dialog {

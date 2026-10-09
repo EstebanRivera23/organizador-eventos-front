@@ -29,7 +29,15 @@ const api = {
     request(`/api/subtareas/${id}/`, { method: "PATCH", body: cambios }),
 
   // Gestiones agrupadas en vencidas / para_hoy / proximas, ya ordenadas.
-  obtenerGestionesHoy: () => request("/api/subtareas/hoy/"),
+  // Los filtros son opcionales: { eventoId, estado }.
+  obtenerGestionesHoy: ({ eventoId, estado } = {}) => {
+    const filtros = new URLSearchParams();
+    if (eventoId) filtros.set("evento_id", eventoId);
+    if (estado) filtros.set("estado", estado);
+
+    const consulta = filtros.toString();
+    return request(`/api/subtareas/hoy/${consulta ? `?${consulta}` : ""}`);
+  },
 };
 
 export const {

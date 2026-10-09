@@ -41,7 +41,7 @@ let subtareas = [
     descripcion: "Confirmar fecha y pagar anticipo.",
     fecha_objetivo: enDias(-3),
     horas_estimadas: 2,
-    estado: "pendiente",
+    estado: "por hacer",
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ let subtareas = [
     descripcion: "Menú para 120 personas.",
     fecha_objetivo: enDias(0),
     horas_estimadas: 3,
-    estado: "en_progreso",
+    estado: "en curso",
   },
   {
     id: 3,
@@ -59,7 +59,7 @@ let subtareas = [
     descripcion: "",
     fecha_objetivo: enDias(0),
     horas_estimadas: 1,
-    estado: "pendiente",
+    estado: "por hacer",
   },
   {
     id: 4,
@@ -68,7 +68,7 @@ let subtareas = [
     descripcion: "Lista de 40 invitados.",
     fecha_objetivo: enDias(-1),
     horas_estimadas: 1.5,
-    estado: "pendiente",
+    estado: "por hacer",
   },
   {
     id: 5,
@@ -77,7 +77,7 @@ let subtareas = [
     descripcion: "",
     fecha_objetivo: enDias(4),
     horas_estimadas: 2,
-    estado: "pendiente",
+    estado: "por hacer",
   },
   {
     id: 6,
@@ -270,10 +270,21 @@ export function actualizarSubtarea(id, cambios) {
 
 // Misma agrupación y orden que GET /api/subtareas/hoy/: no incluye las
 // finalizadas; ordena por fecha objetivo y, en empate, por menos horas.
-export function obtenerGestionesHoy() {
+export function obtenerGestionesHoy({ eventoId, estado } = {}) {
+  if (eventoId && !buscarEvento(eventoId)) {
+    return Promise.reject(
+      new ApiError(404, {
+        detail: "Evento no encontrado para este organizador.",
+      }),
+    );
+  }
+
   const hoy = enDias(0);
   const pendientes = subtareas.filter(
-    (subtarea) => subtarea.estado !== "finalizado",
+    (subtarea) =>
+      subtarea.estado !== "finalizado" &&
+      (!eventoId || subtarea.evento === Number(eventoId)) &&
+      (!estado || subtarea.estado === estado),
   );
   const porFechaYHoras = (a, b) =>
     a.fecha_objetivo.localeCompare(b.fecha_objetivo) ||
@@ -281,7 +292,7 @@ export function obtenerGestionesHoy() {
 
   return responder({
     fecha_actual: hoy,
-    filtros: { evento_id: null, estado: null },
+    filtros: { evento_id: eventoId ?? null, estado: estado ?? null },
     regla:
       "Se muestran primero las vencidas, luego las de hoy y despues las proximas. En empate se prioriza menor esfuerzo estimado.",
     vencidas: pendientes
