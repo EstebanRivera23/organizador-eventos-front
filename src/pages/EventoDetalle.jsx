@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   actualizarEvento,
+  actualizarSubtarea,
   crearSubtarea,
   eliminarEvento,
+  eliminarSubtarea,
   listarSubtareas,
   obtenerEvento,
 } from "../api/eventos";
@@ -35,6 +37,12 @@ function EventoDetalle() {
   // Subtarea que se está reprogramando (null si el diálogo está cerrado).
   const [reprogramando, setReprogramando] = useState(null);
   const [mensajeSubtareas, setMensajeSubtareas] = useState("");
+  // Id de la subtarea que se está editando en la lista (null si ninguna).
+  const [editandoSubtarea, setEditandoSubtarea] = useState(null);
+  // Subtarea que se pidió eliminar y espera confirmación.
+  const [subtareaAEliminar, setSubtareaAEliminar] = useState(null);
+  const [eliminandoSubtarea, setEliminandoSubtarea] = useState(false);
+  const [errorEliminarSubtarea, setErrorEliminarSubtarea] = useState("");
 
   useEffect(() => {
     let activo = true;
@@ -83,14 +91,52 @@ function EventoDetalle() {
     }));
   }
 
-  function alReprogramar(actualizada) {
-    setReprogramando(null);
+  function reemplazarSubtarea(actualizada) {
     setDatos((actuales) => ({
       ...actuales,
       subtareas: actuales.subtareas.map((subtarea) =>
         subtarea.id === actualizada.id ? actualizada : subtarea,
       ),
     }));
+  }
+
+  async function guardarSubtarea(subtarea, cambios) {
+    const actualizada = await actualizarSubtarea(subtarea.id, cambios);
+    reemplazarSubtarea(actualizada);
+    setEditandoSubtarea(null);
+    setMensajeSubtareas(
+      `Listo. Se guardaron los cambios de "${actualizada.titulo}".`,
+    );
+  }
+
+  async function confirmarEliminarSubtarea() {
+    setEliminandoSubtarea(true);
+    setErrorEliminarSubtarea("");
+    try {
+      await eliminarSubtarea(subtareaAEliminar.id);
+      setDatos((actuales) => ({
+        ...actuales,
+        subtareas: actuales.subtareas.filter(
+          (subtarea) => subtarea.id !== subtareaAEliminar.id,
+        ),
+      }));
+      setMensajeSubtareas(`Listo. Se eliminó "${subtareaAEliminar.titulo}".`);
+      setSubtareaAEliminar(null);
+    } catch (error) {
+      setErrorEliminarSubtarea(error.message);
+    } finally {
+      setEliminandoSubtarea(false);
+    }
+  }
+
+  function cancelarEliminarSubtarea() {
+    setSubtareaAEliminar(null);
+    setErrorEliminarSubtarea("");
+  }
+
+  function alReprogramar(actualizada) {
+    setReprogramando(null);
+    reemplazarSubtarea(actualizada);
     setMensajeSubtareas(mensajeReprogramada(actualizada));
   }
 
@@ -230,38 +276,73 @@ function EventoDetalle() {
           <p>Este evento todavía no tiene subtareas.</p>
         ) : (
           <ul className="subtask-list">
-            {subtareas.map((subtarea) => (
-              <li key={subtarea.id}>
-                <div>
-                  <strong>{subtarea.titulo}</strong>
-                  {subtarea.descripcion && <p>{subtarea.descripcion}</p>}
-                  <small>
-                    {formatearFecha(subtarea.fecha_objetivo)} ·{" "}
-                    {subtarea.horas_estimadas} h
-                  </small>
-                </div>
-                <div className="subtask-acciones">
-                  <span
-                    className={`subtask-status ${claseEstado(subtarea.estado)}`}
-                  >
-                    {etiquetaEstado(subtarea.estado)}
-                  </span>
-                  {subtarea.estado !== "finalizado" && (
-                    <button
-                      type="button"
-                      className="btn-suave"
-                      aria-label={`Reprogramar ${subtarea.titulo}`}
-                      onClick={() => {
-                        setMensajeSubtareas("");
-                        setReprogramando(subtarea);
-                      }}
+            {subtareas.map((subtarea) =>
+              editandoSubtarea === subtarea.id ? (
+                <li key={subtarea.id} className="editando">
+                  <h3>Editar subtarea</h3>
+                  <SubtareaForm
+                    subtarea={subtarea}
+                    onSubmit={(cambios) => guardarSubtarea(subtarea, cambios)}
+                    onCancelar={() => setEditandoSubtarea(null)}
+                  />
+                </li>
+              ) : (
+                <li key={subtarea.id}>
+                  <div>
+                    <strong>{subtarea.titulo}</strong>
+                    {subtarea.descripcion && <p>{subtarea.descripcion}</p>}
+                    <small>
+                      {formatearFecha(subtarea.fecha_objetivo)} ·{" "}
+                      {subtarea.horas_estimadas} h
+                    </small>
+                  </div>
+                  <div className="subtask-acciones">
+                    <span
+                      className={`subtask-status ${claseEstado(subtarea.estado)}`}
                     >
-                      Reprogramar
-                    </button>
-                  )}
-                </div>
-              </li>
-            ))}
+                      {etiquetaEstado(subtarea.estado)}
+                    </span>
+                    {subtarea.estado !== "finalizado" && (
+                      <button
+                        type="button"
+                        className="btn-suave"
+                        aria-label={`Reprogramar ${subtarea.titulo}`}
+                        onClick={() => {
+                          setMensajeSubtareas("");
+                          setReprogramando(subtarea);
+                        }}
+                      >
+                        Reprogramar
+                      </button>
+                    )}
+                    <div className="subtask-botones">
+                      <button
+                        type="button"
+                        className="btn-suave"
+                        aria-label={`Editar ${subtarea.titulo}`}
+                        onClick={() => {
+                          setMensajeSubtareas("");
+                          setEditandoSubtarea(subtarea.id);
+                        }}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-suave btn-suave-peligro"
+                        aria-label={`Eliminar ${subtarea.titulo}`}
+                        onClick={() => {
+                          setMensajeSubtareas("");
+                          setSubtareaAEliminar(subtarea);
+                        }}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ),
+            )}
           </ul>
         )}
 
@@ -277,6 +358,17 @@ function EventoDetalle() {
           onGuardado={alReprogramar}
         />
       )}
+
+      <ConfirmDialog
+        abierto={subtareaAEliminar !== null}
+        titulo="¿Deseas eliminar esta subtarea?"
+        mensaje={`Esta acción no se puede deshacer. Se eliminará "${subtareaAEliminar?.titulo ?? ""}".`}
+        textoConfirmar="Sí, eliminar"
+        procesando={eliminandoSubtarea}
+        error={errorEliminarSubtarea}
+        onConfirmar={confirmarEliminarSubtarea}
+        onCancelar={cancelarEliminarSubtarea}
+      />
 
       <ConfirmDialog
         abierto={confirmando}

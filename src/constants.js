@@ -26,7 +26,7 @@ const EQUIVALENCIAS_ESTADO = {
   en_progreso: "en curso",
 };
 
-function normalizarEstado(valor) {
+export function normalizarEstado(valor) {
   const estado = String(valor ?? "").trim().toLowerCase();
   return EQUIVALENCIAS_ESTADO[estado] ?? estado;
 }
