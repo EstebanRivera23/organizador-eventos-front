@@ -79,7 +79,7 @@ function Configuracion() {
   if (errorCarga) {
     return (
       <Layout>
-        <section className="content-card hoy-state" role="alert">
+        <section className="panel hoy-state" role="alert">
           <h2>No pudimos cargar tu límite diario</h2>
           <p>{errorCarga}</p>
           <p>Tu límite no cambió. Revisa tu conexión e inténtalo de nuevo.</p>
@@ -93,8 +93,12 @@ function Configuracion() {
 
   return (
     <Layout>
-      <section className="content-card">
-        <p className="eyebrow">Configuración</p>
+      <header className="encabezado">
+        <h1>Configuración</h1>
+        <p className="sub">Ajustes de tu trabajo diario.</p>
+      </header>
+
+      <section className="panel panel-relleno formulario">
         <h2>Límite diario de horas</h2>
         <p>
           Es el máximo de horas de gestión que quieres dedicarle a tus eventos

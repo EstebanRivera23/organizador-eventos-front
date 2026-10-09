@@ -11,6 +11,7 @@ import {
 } from "../api/eventos";
 import ConfirmDialog from "../components/ConfirmDialog";
 import EventoForm from "../components/EventoForm";
+import IconoEstado from "../components/IconoEstado";
 import Layout from "../components/Layout";
 import ReprogramarDialog from "../components/ReprogramarDialog";
 import SubtareaForm from "../components/SubtareaForm";
@@ -184,84 +185,84 @@ function EventoDetalle() {
 
   return (
     <Layout>
-      <section className="content-card">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">Detalle del evento</p>
-            <h2>{evento.nombre}</h2>
-          </div>
+      <Link className="volver" to="/eventos">
+        ← Eventos
+      </Link>
 
-          {!editando && (
-            <div className="form-actions">
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => {
-                  setMensaje("");
-                  setEditando(true);
-                }}
-              >
-                Editar
-              </button>
-              <button
-                type="button"
-                className="btn-danger"
-                onClick={() => setConfirmando(true)}
-              >
-                Eliminar
-              </button>
-            </div>
-          )}
+      <div className="encabezado-fila">
+        <div>
+          <h1>{evento.nombre}</h1>
+          <p className="sub">{formatearFechaHora(evento.fecha_hora)}</p>
         </div>
 
-        {mensaje && (
-          <p className="alert-success" role="status">
-            {mensaje}
-          </p>
+        {!editando && (
+          <div className="acciones">
+            <button
+              type="button"
+              className="btn linea"
+              onClick={() => {
+                setMensaje("");
+                setEditando(true);
+              }}
+            >
+              Editar
+            </button>
+            <button
+              type="button"
+              className="btn linea peligro"
+              onClick={() => setConfirmando(true)}
+            >
+              Eliminar
+            </button>
+          </div>
         )}
+      </div>
 
-        {editando ? (
+      {mensaje && (
+        <p className="alert-success" role="status">
+          {mensaje}
+        </p>
+      )}
+
+      {editando ? (
+        <section className="panel panel-relleno formulario edicion-evento">
           <EventoForm
             evento={evento}
             textoBoton="Guardar cambios"
             onSubmit={guardarEvento}
             onCancelar={() => setEditando(false)}
           />
-        ) : (
-          <dl className="detail-list">
-            <div>
-              <dt>Tipo</dt>
-              <dd>{evento.tipo}</dd>
-            </div>
-            <div>
-              <dt>Cliente / contacto</dt>
-              <dd>{evento.cliente_contacto}</dd>
-            </div>
-            <div>
-              <dt>Fecha y hora</dt>
-              <dd>{formatearFechaHora(evento.fecha_hora)}</dd>
-            </div>
-            <div>
-              <dt>Lugar</dt>
-              <dd>{evento.lugar}</dd>
-            </div>
-            <div>
-              <dt>Plazo límite</dt>
-              <dd>{formatearFecha(evento.plazo_limite)}</dd>
-            </div>
-          </dl>
-        )}
-      </section>
-
-      <section className="content-card">
-        <div className="section-header">
+        </section>
+      ) : (
+        <dl className="panel detail-list">
           <div>
-            <p className="eyebrow">Logística</p>
-            <h2>Subtareas</h2>
+            <dt>Tipo</dt>
+            <dd>{evento.tipo}</dd>
           </div>
+          <div>
+            <dt>Contacto del cliente</dt>
+            <dd>{evento.cliente_contacto}</dd>
+          </div>
+          <div>
+            <dt>Lugar</dt>
+            <dd>{evento.lugar}</dd>
+          </div>
+          <div>
+            <dt>Plazo límite</dt>
+            <dd>{formatearFecha(evento.plazo_limite)}</dd>
+          </div>
+        </dl>
+      )}
+
+      <section className="panel hoy-group">
+        <div className="grupo-cabecera section-header">
+          <h2>Gestiones</h2>
           {subtareas.length > 0 && (
-            <span className="status">
-              {subtareas.length} · {horasTotales} h estimadas
+            <span className="grupo-resumen status">
+              {subtareas.length === 1
+                ? "1 gestión"
+                : `${subtareas.length} gestiones`}
+              , {horasTotales} h estimadas
             </span>
           )}
         </div>
@@ -273,13 +274,13 @@ function EventoDetalle() {
         )}
 
         {subtareas.length === 0 ? (
-          <p>Este evento todavía no tiene subtareas.</p>
+          <p className="grupo-vacio">Este evento todavía no tiene gestiones.</p>
         ) : (
           <ul className="subtask-list">
             {subtareas.map((subtarea) =>
               editandoSubtarea === subtarea.id ? (
                 <li key={subtarea.id} className="editando">
-                  <h3>Editar subtarea</h3>
+                  <h3>Editar gestión</h3>
                   <SubtareaForm
                     subtarea={subtarea}
                     onSubmit={(cambios) => guardarSubtarea(subtarea, cambios)}
@@ -288,6 +289,7 @@ function EventoDetalle() {
                 </li>
               ) : (
                 <li key={subtarea.id}>
+                  <IconoEstado estado={subtarea.estado} />
                   <div>
                     <strong>{subtarea.titulo}</strong>
                     {subtarea.descripcion && <p>{subtarea.descripcion}</p>}
@@ -302,23 +304,10 @@ function EventoDetalle() {
                     >
                       {etiquetaEstado(subtarea.estado)}
                     </span>
-                    {subtarea.estado !== "finalizado" && (
-                      <button
-                        type="button"
-                        className="btn-suave"
-                        aria-label={`Reprogramar ${subtarea.titulo}`}
-                        onClick={() => {
-                          setMensajeSubtareas("");
-                          setReprogramando(subtarea);
-                        }}
-                      >
-                        Reprogramar
-                      </button>
-                    )}
                     <div className="subtask-botones">
                       <button
                         type="button"
-                        className="btn-suave"
+                        className="enlace"
                         aria-label={`Editar ${subtarea.titulo}`}
                         onClick={() => {
                           setMensajeSubtareas("");
@@ -327,9 +316,22 @@ function EventoDetalle() {
                       >
                         Editar
                       </button>
+                      {subtarea.estado !== "finalizado" && (
+                        <button
+                          type="button"
+                          className="enlace"
+                          aria-label={`Reprogramar ${subtarea.titulo}`}
+                          onClick={() => {
+                            setMensajeSubtareas("");
+                            setReprogramando(subtarea);
+                          }}
+                        >
+                          Reprogramar
+                        </button>
+                      )}
                       <button
                         type="button"
-                        className="btn-suave btn-suave-peligro"
+                        className="enlace rojo"
                         aria-label={`Eliminar ${subtarea.titulo}`}
                         onClick={() => {
                           setMensajeSubtareas("");
@@ -345,8 +347,10 @@ function EventoDetalle() {
             )}
           </ul>
         )}
+      </section>
 
-        <h3 className="subsection-title">Agregar subtarea</h3>
+      <section className="panel panel-relleno">
+        <h2>Agregar gestión</h2>
         <SubtareaForm onSubmit={agregarSubtarea} />
       </section>
 
@@ -361,7 +365,7 @@ function EventoDetalle() {
 
       <ConfirmDialog
         abierto={subtareaAEliminar !== null}
-        titulo="¿Deseas eliminar esta subtarea?"
+        titulo="¿Deseas eliminar esta gestión?"
         mensaje={`Esta acción no se puede deshacer. Se eliminará "${subtareaAEliminar?.titulo ?? ""}".`}
         textoConfirmar="Sí, eliminar"
         procesando={eliminandoSubtarea}
@@ -373,7 +377,7 @@ function EventoDetalle() {
       <ConfirmDialog
         abierto={confirmando}
         titulo="¿Deseas eliminar este evento?"
-        mensaje={`Esta acción no se puede deshacer. Se eliminará "${evento.nombre}" junto con sus subtareas.`}
+        mensaje={`Esta acción no se puede deshacer. Se eliminará "${evento.nombre}" junto con sus gestiones.`}
         textoConfirmar="Sí, eliminar"
         procesando={eliminando}
         error={errorEliminar}

@@ -31,7 +31,7 @@ export function validarSubtarea(valores) {
   const errores = {};
 
   if (estaVacio(valores.titulo)) {
-    errores.titulo = "El título de la subtarea es obligatorio.";
+    errores.titulo = "El título de la gestión es obligatorio.";
   }
   if (estaVacio(valores.fecha_objetivo)) {
     errores.fecha_objetivo = "Indica la fecha objetivo.";
@@ -42,7 +42,7 @@ export function validarSubtarea(valores) {
     errores.horas_estimadas = "Las horas estimadas deben ser mayores a 0.";
   }
   if (estaVacio(valores.estado)) {
-    errores.estado = "Selecciona el estado de la subtarea.";
+    errores.estado = "Selecciona el estado de la gestión.";
   }
 
   return errores;

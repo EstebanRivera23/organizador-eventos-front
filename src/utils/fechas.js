@@ -57,3 +57,38 @@ export function diasEntre(desde, hasta) {
   const MS_POR_DIA = 24 * 60 * 60 * 1000;
   return Math.round((leerFecha(hasta) - leerFecha(desde)) / MS_POR_DIA);
 }
+
+// "Viernes 9 de octubre": para encabezados.
+export function formatearFechaLarga(valor) {
+  if (!valor) return "—";
+  const texto = leerFecha(valor)
+    .toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long" })
+    .replace(",", "");
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+// "20 de octubre"
+export function formatearDiaYMes(valor) {
+  if (!valor) return "—";
+  return leerFecha(valor).toLocaleDateString("es", {
+    day: "numeric",
+    month: "long",
+  });
+}
+
+// Día y mes abreviado por separado ({ dia: "24", mes: "oct" }), para mostrar
+// el día en grande.
+export function partesDeFecha(valor) {
+  const fecha = leerFecha(valor);
+  return {
+    dia: String(fecha.getDate()),
+    mes: fecha.toLocaleDateString("es", { month: "short" }).replace(".", ""),
+  };
+}
+
+// Fecha local (AAAA-MM-DD) de un valor con hora, para compararla con otras.
+export function soloFecha(valor) {
+  const fecha = new Date(valor);
+  if (Number.isNaN(fecha.getTime())) return String(valor).slice(0, 10);
+  return `${fecha.getFullYear()}-${dosDigitos(fecha.getMonth() + 1)}-${dosDigitos(fecha.getDate())}`;
+}

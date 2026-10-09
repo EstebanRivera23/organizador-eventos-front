@@ -15,12 +15,20 @@ function CrearEvento() {
 
   return (
     <Layout>
-      <section className="content-card">
-        <p className="eyebrow">Nuevo evento</p>
-        <h2>Crear evento</h2>
-        <p>Registra los datos principales del evento. Todos son obligatorios.</p>
+      <header className="encabezado">
+        <h1>Crear evento</h1>
+        <p className="sub">
+          Registra los datos principales. Al guardar podrás agregar sus
+          gestiones.
+        </p>
+      </header>
 
-        <EventoForm textoBoton="Guardar evento" onSubmit={handleSubmit} />
+      <section className="panel panel-relleno formulario">
+        <EventoForm
+          textoBoton="Guardar evento"
+          onSubmit={handleSubmit}
+          onCancelar={() => navigate("/eventos")}
+        />
       </section>
     </Layout>
   );

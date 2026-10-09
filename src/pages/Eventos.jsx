@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { listarEventos } from "../api/eventos";
 import Layout from "../components/Layout";
-import { formatearFechaHora } from "../utils/fechas";
+import { formatearDiaYMes, partesDeFecha, soloFecha } from "../utils/fechas";
+
+const hora = (valor) =>
+  new Date(valor).toLocaleTimeString("es", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
 function Eventos() {
   const { state } = useLocation();
@@ -19,59 +25,70 @@ function Eventos() {
     };
   }, []);
 
+  // Sin eventos, el único botón de crear es el del aviso de la página.
   return (
-    <Layout>
-      <section className="content-card">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">Eventos</p>
-            <h2>Mis eventos</h2>
-          </div>
+    <Layout ocultarCrear={eventos?.length === 0}>
+      <header className="encabezado">
+        <h1>Eventos</h1>
+        <p className="sub">Todo lo que estás organizando.</p>
+      </header>
+
+      {state?.mensaje && (
+        <p className="alert-success" role="status">
+          {state.mensaje}
+        </p>
+      )}
+
+      {error && (
+        <p className="alert-error" role="alert">
+          {error}
+        </p>
+      )}
+
+      {!error && eventos === null && <p role="status">Cargando eventos...</p>}
+
+      {eventos?.length === 0 && (
+        <div className="panel empty-state">
+          <h2>Aún no tienes eventos</h2>
+          <p>
+            Crea tu primer evento para comenzar a organizar tus tareas
+            logísticas.
+          </p>
           <Link className="btn-link" to="/crear">
             Crear evento
           </Link>
         </div>
+      )}
 
-        {state?.mensaje && (
-          <p className="alert-success" role="status">
-            {state.mensaje}
-          </p>
-        )}
+      {eventos?.length > 0 && (
+        <ul className="panel event-list">
+          {eventos.map((evento) => {
+            const { dia, mes } = partesDeFecha(soloFecha(evento.fecha_hora));
 
-        {error && (
-          <p className="alert-error" role="alert">
-            {error}
-          </p>
-        )}
-
-        {!error && eventos === null && <p>Cargando eventos...</p>}
-
-        {eventos?.length === 0 && (
-          <div className="empty-state">
-            <p><strong>Aún no tienes eventos.</strong></p>
-            <p>Crea tu primer evento para comenzar a organizar tus tareas logísticas.</p>
-            <Link className="btn-link" to="/crear">
-              Crear evento
-            </Link>
-          </div>
-        )}
-
-        {eventos?.length > 0 && (
-          <ul className="event-list">
-            {eventos.map((evento) => (
+            return (
               <li key={evento.id}>
                 <Link to={`/evento/${evento.id}`}>
-                  <strong>{evento.nombre}</strong>
-                  <span>
-                    {evento.tipo} · {formatearFechaHora(evento.fecha_hora)} ·{" "}
-                    {evento.lugar}
+                  <span className="dia-mes">
+                    <b>{dia}</b>
+                    <span>{mes}</span>
                   </span>
+                  <div>
+                    <h3>{evento.nombre}</h3>
+                    <p>
+                      {evento.tipo}, {hora(evento.fecha_hora)}, {evento.lugar}
+                    </p>
+                  </div>
+                  {evento.plazo_limite && (
+                    <p className="plazo">
+                      Plazo límite: {formatearDiaYMes(evento.plazo_limite)}
+                    </p>
+                  )}
                 </Link>
               </li>
-            ))}
-          </ul>
-        )}
-      </section>
+            );
+          })}
+        </ul>
+      )}
     </Layout>
   );
 }
