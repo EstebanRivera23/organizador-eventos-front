@@ -80,7 +80,8 @@ function Eventos() {
                   </div>
                   {evento.plazo_limite && (
                     <p className="plazo">
-                      Plazo límite: {formatearDiaYMes(evento.plazo_limite)}
+                      Fecha límite de preparación:{" "}
+                      {formatearDiaYMes(evento.plazo_limite)}
                     </p>
                   )}
                 </Link>
