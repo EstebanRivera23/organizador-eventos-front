@@ -793,6 +793,92 @@ a:focus {
   box-shadow: var(--shadow);
 }
 
+/* Diálogo de reprogramar y de conflicto por sobrecarga */
+
+.reprogramar-dialog {
+  width: min(520px, calc(100% - 32px));
+}
+
+.reprogramar-dialog h3:focus {
+  outline: none;
+}
+
+.reprogramar-dialog .form-grid {
+  margin-top: 16px;
+}
+
+.reprogramar-dialog .conflicto-cifras {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-left: 6px solid var(--accent);
+  border-radius: 14px;
+  background: var(--soft-orange);
+  color: var(--text);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.reprogramar-dialog .conflicto-pregunta {
+  margin: 20px 0 10px;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.dialog-opciones {
+  display: grid;
+  gap: 10px;
+}
+
+.dialog-opciones button {
+  width: 100%;
+  font: inherit;
+  font-weight: 900;
+  text-align: center;
+}
+
+.dialog-opciones .btn-secondary {
+  border: none;
+  border-radius: 16px;
+  padding: 13px 18px;
+  background: var(--soft-purple);
+  color: var(--primary-dark);
+  cursor: pointer;
+}
+
+/* Botón secundario pequeño, para acciones dentro de tarjetas y listas */
+
+.btn-suave {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 14px;
+  background: var(--panel);
+  color: var(--primary-dark);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-suave:hover {
+  background: var(--soft-purple);
+}
+
+.gestion-card .btn-suave {
+  margin-top: 16px;
+}
+
+.subtask-acciones {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+
+.alert-success.aviso-suelto {
+  margin: 0 0 22px;
+  background: var(--soft-green);
+  color: var(--success);
+}
+
 .confirm-dialog::backdrop {
   background: rgba(33, 28, 47, 0.55);
 }
