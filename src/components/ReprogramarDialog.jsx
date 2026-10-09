@@ -8,7 +8,7 @@ const enHoras = (horas) => `${Number(horas)} h`;
 
 // Diálogo para cambiar la fecha de una gestión. Si el día elegido queda por
 // encima del límite diario, el backend responde 409 con las cifras y aquí se
-// ofrecen las dos salidas: mover a otro día o reducir las horas.
+// ofrecen las tres salidas: mover a otro día, reducir las horas o posponer.
 function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
   const dialogRef = useRef(null);
   const tituloRef = useRef(null);
@@ -124,6 +124,10 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
   // Días cercanos donde la gestión sí cabe, calculados por el backend.
   const sugeridas = conflicto?.fechas_sugeridas;
 
+  // Primer día posterior donde la gestión cabe: null si no hay ninguno antes
+  // del evento.
+  const posponer = conflicto?.fecha_posponer;
+
   return (
     <dialog
       ref={dialogRef}
@@ -229,6 +233,12 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
             cambio.
           </p>
 
+          {errorGeneral && (
+            <p className="alert-error" role="alert">
+              {errorGeneral}
+            </p>
+          )}
+
           <p className="conflicto-pregunta">¿Cómo quieres resolverlo?</p>
           <div className="dialog-opciones">
             <button
@@ -248,10 +258,39 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
             >
               Reducir horas estimadas
             </button>
-            <button type="button" className="btn-secondary" onClick={cerrar}>
+            {posponer && (
+              <button
+                type="button"
+                className="btn-link"
+                disabled={guardando}
+                onClick={() => guardar({ fecha_objetivo: posponer.fecha })}
+              >
+                {guardando
+                  ? "Guardando..."
+                  : `Posponer para el ${formatearFechaConDia(posponer.fecha)}`}
+              </button>
+            )}
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={cerrar}
+              disabled={guardando}
+            >
               Cancelar y dejarla como estaba
             </button>
           </div>
+          {posponer && (
+            <p className="field-help">
+              Posponer la pasa al siguiente día donde sí te cabe: quedarías con{" "}
+              {enHoras(posponer.horas_planificadas)}.
+            </p>
+          )}
+          {posponer === null && (
+            <p className="field-help">
+              No se puede posponer: no hay un día posterior con espacio antes
+              del evento.
+            </p>
+          )}
         </div>
       )}
 
