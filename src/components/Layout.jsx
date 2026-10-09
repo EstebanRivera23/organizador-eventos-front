@@ -7,29 +7,59 @@ import ConfirmDialog from "./ConfirmDialog";
 import "@fontsource-variable/schibsted-grotesk";
 import "../interior.css";
 
-// Marco de todas las pantallas con sesión: barra superior con las pestañas,
-// el botón de crear evento y el menú del usuario. En celular las pestañas
-// pasan a una barra fija abajo.
-function Layout({ children, ocultarCrear = false }) {
-  const { organizador, logout } = useAuth();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
+// Íconos del menú: los mismos en la barra lateral y en la barra del celular.
+const ICONOS = {
+  hoy: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4" />
+    </>
+  ),
+  eventos: (
+    <>
+      <rect x="3" y="5" width="18" height="16" rx="3" />
+      <path d="M8 3v4M16 3v4M3 10h18" />
+    </>
+  ),
+  crear: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v8M8 12h8" />
+    </>
+  ),
+  progreso: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />,
+  configuracion: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
+    </>
+  ),
+};
 
-  const [menuAbierto, setMenuAbierto] = useState(false);
-  const [confirmandoSalida, setConfirmandoSalida] = useState(false);
+function Icono({ nombre }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      {ICONOS[nombre]}
+    </svg>
+  );
+}
+
+// Botón con el nombre del usuario que abre el menú de Configuración y
+// Cerrar sesión. Se cierra con un clic por fuera o con Escape.
+function MenuUsuario({ nombre, email, onSalir }) {
+  const [abierto, setAbierto] = useState(false);
   const menuRef = useRef(null);
   const botonRef = useRef(null);
 
-  // El menú se cierra con un clic por fuera o con Escape.
   useEffect(() => {
-    if (!menuAbierto) return;
+    if (!abierto) return;
 
     function alHacerClic(e) {
-      if (!menuRef.current.contains(e.target)) setMenuAbierto(false);
+      if (!menuRef.current.contains(e.target)) setAbierto(false);
     }
     function alPresionar(e) {
       if (e.key === "Escape") {
-        setMenuAbierto(false);
+        setAbierto(false);
         botonRef.current.focus();
       }
     }
@@ -40,7 +70,69 @@ function Layout({ children, ocultarCrear = false }) {
       document.removeEventListener("mousedown", alHacerClic);
       document.removeEventListener("keydown", alPresionar);
     };
-  }, [menuAbierto]);
+  }, [abierto]);
+
+  return (
+    <div className="usuario" ref={menuRef}>
+      <button
+        type="button"
+        className="usuario-boton"
+        ref={botonRef}
+        aria-haspopup="true"
+        aria-expanded={abierto}
+        aria-label={`Menú de ${nombre}`}
+        onClick={() => setAbierto((estaba) => !estaba)}
+      >
+        <span className="usuario-inicial" aria-hidden="true">
+          {nombre.charAt(0).toUpperCase()}
+        </span>
+        <span className="usuario-nombre">{nombre}</span>
+        <svg className="usuario-flecha" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {abierto && (
+        <div className="usuario-menu">
+          <div className="usuario-quien">
+            <b>{nombre}</b>
+            {email && <small>{email}</small>}
+            {USE_MOCK && (
+              <small
+                className="datos-prueba"
+                title="Los datos viven en memoria y se pierden al recargar."
+              >
+                Modo datos de prueba
+              </small>
+            )}
+          </div>
+          <Link to="/configuracion" onClick={() => setAbierto(false)}>
+            Configuración
+          </Link>
+          <button
+            type="button"
+            className="salir"
+            onClick={() => {
+              setAbierto(false);
+              onSalir();
+            }}
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Marco de todas las pantallas con sesión. En computador el menú va en una
+// barra lateral fija; en pantallas angostas, en una barra arriba y, en
+// celular, en una barra fija abajo.
+function Layout({ children, ocultarCrear = false }) {
+  const { organizador, logout } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [confirmandoSalida, setConfirmandoSalida] = useState(false);
 
   function handleLogout() {
     logout();
@@ -52,16 +144,65 @@ function Layout({ children, ocultarCrear = false }) {
   const nombre = organizador?.nombre ?? "Sesión activa";
   const mostrarCrear = !ocultarCrear && pathname !== "/crear";
 
+  const marca = (
+    <Link className="marca" to="/hoy">
+      <img src={logo} alt="" width="30" height="30" />
+      <span>
+        Event<i>Flow</i>
+      </span>
+    </Link>
+  );
+
+  const botonCrear = mostrarCrear && (
+    <Link className="btn btn-crear" to="/crear">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Crear evento
+    </Link>
+  );
+
+  const menuUsuario = (
+    <MenuUsuario
+      nombre={nombre}
+      email={organizador?.email}
+      onSalir={() => setConfirmandoSalida(true)}
+    />
+  );
+
   return (
     <div className="interior">
+      <aside className="barra-lateral">
+        {marca}
+        {botonCrear}
+
+        <nav aria-label="Principal">
+          <NavLink to="/hoy">
+            <Icono nombre="hoy" />
+            Hoy
+          </NavLink>
+          <NavLink to="/eventos">
+            <Icono nombre="eventos" />
+            Eventos
+          </NavLink>
+          <NavLink to="/progreso">
+            <Icono nombre="progreso" />
+            Progreso
+          </NavLink>
+        </nav>
+
+        <div className="barra-lateral-pie">
+          <NavLink to="/configuracion">
+            <Icono nombre="configuracion" />
+            Configuración
+          </NavLink>
+          {menuUsuario}
+        </div>
+      </aside>
+
       <header className="barra">
         <div className="barra-contenido">
-          <Link className="marca" to="/hoy">
-            <img src={logo} alt="" width="30" height="30" />
-            <span>
-              Event<i>Flow</i>
-            </span>
-          </Link>
+          {marca}
 
           <nav className="pestanas" aria-label="Principal">
             <NavLink to="/hoy">Hoy</NavLink>
@@ -71,68 +212,8 @@ function Layout({ children, ocultarCrear = false }) {
 
           <span className="espacio" />
 
-          {mostrarCrear && (
-            <Link className="btn btn-crear" to="/crear">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              Crear evento
-            </Link>
-          )}
-
-          <div className="usuario" ref={menuRef}>
-            <button
-              type="button"
-              className="usuario-boton"
-              ref={botonRef}
-              aria-haspopup="true"
-              aria-expanded={menuAbierto}
-              aria-label={`Menú de ${nombre}`}
-              onClick={() => setMenuAbierto((abierto) => !abierto)}
-            >
-              <span className="usuario-inicial" aria-hidden="true">
-                {nombre.charAt(0).toUpperCase()}
-              </span>
-              <span className="usuario-nombre">{nombre}</span>
-              <svg
-                className="usuario-flecha"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
-
-            {menuAbierto && (
-              <div className="usuario-menu">
-                <div className="usuario-quien">
-                  <b>{nombre}</b>
-                  {organizador?.email && <small>{organizador.email}</small>}
-                  {USE_MOCK && (
-                    <small
-                      className="datos-prueba"
-                      title="Los datos viven en memoria y se pierden al recargar."
-                    >
-                      Modo datos de prueba
-                    </small>
-                  )}
-                </div>
-                <Link to="/configuracion" onClick={() => setMenuAbierto(false)}>
-                  Configuración
-                </Link>
-                <button
-                  type="button"
-                  className="salir"
-                  onClick={() => {
-                    setMenuAbierto(false);
-                    setConfirmandoSalida(true);
-                  }}
-                >
-                  Cerrar sesión
-                </button>
-              </div>
-            )}
-          </div>
+          {botonCrear}
+          {menuUsuario}
         </div>
       </header>
 
@@ -140,30 +221,19 @@ function Layout({ children, ocultarCrear = false }) {
 
       <nav className="barra-inferior" aria-label="Principal">
         <NavLink to="/hoy">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4" />
-          </svg>
+          <Icono nombre="hoy" />
           Hoy
         </NavLink>
         <NavLink to="/eventos">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="5" width="18" height="16" rx="3" />
-            <path d="M8 3v4M16 3v4M3 10h18" />
-          </svg>
+          <Icono nombre="eventos" />
           Eventos
         </NavLink>
         <NavLink to="/crear">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 8v8M8 12h8" />
-          </svg>
+          <Icono nombre="crear" />
           Crear
         </NavLink>
         <NavLink to="/progreso">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
-          </svg>
+          <Icono nombre="progreso" />
           Progreso
         </NavLink>
       </nav>
