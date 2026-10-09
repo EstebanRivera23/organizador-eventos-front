@@ -518,46 +518,77 @@ a:focus {
   }
 }
 
-/* Si además la pantalla es alta, la tarjeta crece otro 15 % sin que haya
-   que bajar con la rueda para ver el botón. */
+/* Si además la pantalla es alta, la tarjeta de iniciar sesión crece otro
+   15 % sin que haya que bajar con la rueda para ver el botón. La de crear
+   cuenta no, porque tiene más campos. */
 
 @media (min-width: 1000px) and (min-height: 740px) {
-  .login-lema {
+  .login-page:not(.login-page-larga) .login-lema {
     margin-bottom: 22px;
     font-size: 20px;
   }
 
-  .login-card {
+  .login-page:not(.login-page-larga) .login-card {
     max-width: 690px;
     padding: 32px;
   }
 
-  .login-card h2 {
+  .login-page:not(.login-page-larga) .login-card h2 {
     font-size: 42px;
   }
 
-  .login-card > p,
-  .login-card .form-grid label,
-  .login-card .form-grid button {
+  .login-page:not(.login-page-larga) .login-card > p,
+  .login-page:not(.login-page-larga) .login-card .form-grid label,
+  .login-page:not(.login-page-larga) .login-card .form-grid button {
     font-size: 20px;
   }
 
-  .login-card .form-grid {
+  .login-page:not(.login-page-larga) .login-card .form-grid {
     margin-top: 32px;
     gap: 24px;
   }
 
-  .login-card .form-grid input {
+  .login-page:not(.login-page-larga) .login-card .form-grid input {
     padding: 18px 20px;
   }
 
-  .login-card .form-grid button {
+  .login-page:not(.login-page-larga) .login-card .form-grid button {
     padding: 19px 22px;
   }
 
-  .login-card .field-error {
+  .login-page:not(.login-page-larga) .login-card .field-error {
     font-size: 17px;
   }
+}
+
+/* Enlace entre iniciar sesión y crear cuenta, debajo del formulario */
+
+.login-card > .login-enlace {
+  margin: 20px 0 0;
+  font-size: 16px;
+}
+
+.login-enlace a {
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* El registro tiene más campos: se queda en el tamaño intermedio */
+
+.login-page-larga {
+  padding-bottom: 34px;
+}
+
+.login-page-larga .login-card .field-help {
+  font-size: 13px;
+}
+
+/* Contraseña y confirmación van lado a lado, alineadas arriba aunque una
+   tenga texto de ayuda o de error y la otra no */
+
+.login-card .form-row {
+  align-items: start;
 }
 
 /* Formularios de eventos y subtareas */

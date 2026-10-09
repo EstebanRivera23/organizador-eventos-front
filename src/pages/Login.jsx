@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Campo from "../components/Campo";
+import PortadaAcceso from "../components/PortadaAcceso";
 import { erroresDeApi } from "../api/client";
-import logo from "../assets/brand/logo-eventflow.svg";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -56,62 +56,48 @@ function Login() {
   }
 
   return (
-    <main className="login-page">
-      <header className="login-brand">
-        <img src={logo} alt="" width="40" height="40" />
-        <div>
-          <span className="login-brand-name">
-            Event<span>Flow</span>
-          </span>
-          <h1>Organizador de Eventos Independientes</h1>
-        </div>
-      </header>
+    <PortadaAcceso>
+      <h2>Iniciar sesión</h2>
+      <p>Ingresa con tu correo y tu contraseña.</p>
 
-      <p className="login-lema">
-        Organiza <span aria-hidden="true">·</span> Prioriza{" "}
-        <span aria-hidden="true">·</span> Cumple
+      <form className="form-grid" onSubmit={handleSubmit} noValidate>
+        {errorGeneral && (
+          <p className="alert-error" role="alert">
+            {errorGeneral}
+          </p>
+        )}
+
+        <Campo
+          label="Correo electrónico"
+          name="email"
+          type="email"
+          placeholder="usuario@correo.com"
+          value={valores.email}
+          onChange={handleChange}
+          error={errores.email}
+          required
+        />
+
+        <Campo
+          label="Contraseña"
+          name="password"
+          type="password"
+          placeholder="********"
+          value={valores.password}
+          onChange={handleChange}
+          error={errores.password}
+          required
+        />
+
+        <button type="submit" disabled={enviando}>
+          {enviando ? "Ingresando..." : "Ingresar"}
+        </button>
+      </form>
+
+      <p className="login-enlace">
+        ¿Aún no tienes cuenta? <Link to="/registro">Crear cuenta</Link>
       </p>
-
-      <section className="login-card">
-        <h2>Iniciar sesión</h2>
-        <p>Ingresa con tu correo y una contraseña de al menos 6 caracteres.</p>
-
-        <form className="form-grid" onSubmit={handleSubmit} noValidate>
-          {errorGeneral && (
-            <p className="alert-error" role="alert">
-              {errorGeneral}
-            </p>
-          )}
-
-          <Campo
-            label="Correo electrónico"
-            name="email"
-            type="email"
-            placeholder="usuario@correo.com"
-            value={valores.email}
-            onChange={handleChange}
-            error={errores.email}
-            required
-          />
-
-          <Campo
-            label="Contraseña"
-            name="password"
-            type="password"
-            placeholder="********"
-            value={valores.password}
-            onChange={handleChange}
-            error={errores.password}
-            required
-            minLength={6}
-          />
-
-          <button type="submit" disabled={enviando}>
-            {enviando ? "Ingresando..." : "Ingresar"}
-          </button>
-        </form>
-      </section>
-    </main>
+    </PortadaAcceso>
   );
 }
 
