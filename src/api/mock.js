@@ -296,11 +296,34 @@ export function obtenerGestionesHoy() {
   });
 }
 
-// --- Auth (Sprint 2) ---
-// Simulado en memoria: acepta cualquier correo con contraseña >= 6
-// caracteres. Como no hay backend real detrás, la "sesión" no sobrevive un
-// refresh de página (igual que el resto de datos en modo mock).
+// --- Sesión ---
+// Simulada en memoria, con las mismas reglas del backend: solo entran las
+// cuentas registradas. Hay una cuenta lista para probar sin registrarse:
+// prueba1@correo.com / prueba123. Como no hay backend real detrás, la sesión
+// y las cuentas nuevas no sobreviven un refresh de la página.
+let cuentas = [
+  {
+    id: "mock-organizador-1",
+    nombre: "prueba1",
+    email: "prueba1@correo.com",
+    password: "prueba123",
+  },
+];
 let organizadorActual = null;
+
+function abrirSesion(cuenta, mensaje) {
+  organizadorActual = {
+    id: cuenta.id,
+    nombre: cuenta.nombre,
+    email: cuenta.email,
+  };
+
+  return responder({
+    message: mensaje,
+    token: "mock-token",
+    organizador: organizadorActual,
+  });
+}
 
 export function login(email, password) {
   if (!email) {
@@ -313,6 +336,27 @@ export function login(email, password) {
       new ApiError(400, { password: ["Este campo es obligatorio."] }),
     );
   }
+
+  const cuenta = cuentas.find(
+    (c) => c.email === email.trim().toLowerCase() && c.password === password,
+  );
+  if (!cuenta) {
+    return Promise.reject(
+      new ApiError(401, { detail: "Credenciales inválidas." }),
+    );
+  }
+
+  return abrirSesion(cuenta, "Login correcto");
+}
+
+export function registrar(nombre, email, password) {
+  const correo = email.trim().toLowerCase();
+
+  if (cuentas.some((c) => c.email === correo)) {
+    return Promise.reject(
+      new ApiError(400, { email: ["Ya existe una cuenta con este correo."] }),
+    );
+  }
   if (password.length < 6) {
     return Promise.reject(
       new ApiError(400, {
@@ -321,17 +365,14 @@ export function login(email, password) {
     );
   }
 
-  organizadorActual = {
-    id: "mock-organizador",
-    nombre: email.split("@")[0],
-    email,
+  const cuenta = {
+    id: `mock-organizador-${cuentas.length + 1}`,
+    nombre,
+    email: correo,
+    password,
   };
-
-  return responder({
-    message: "Login correcto",
-    token: "mock-token",
-    organizador: organizadorActual,
-  });
+  cuentas = [...cuentas, cuenta];
+  return abrirSesion(cuenta, "Cuenta creada");
 }
 
 export function obtenerPerfil() {

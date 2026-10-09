@@ -5,7 +5,11 @@ import {
   TOKEN_KEY,
   USE_MOCK,
 } from "../api/client";
-import { login as loginApi, obtenerPerfil } from "../api/auth";
+import {
+  login as loginApi,
+  obtenerPerfil,
+  registrar as registrarApi,
+} from "../api/auth";
 import { AuthContext } from "./AuthContext";
 
 export function AuthProvider({ children }) {
@@ -106,14 +110,22 @@ export function AuthProvider({ children }) {
     };
   }, [token, expirarSesion]);
 
-  async function login(email, password) {
-    const datos = await loginApi(email, password);
+  // El login y el registro responden lo mismo: el token y el perfil.
+  function iniciarSesion(datos) {
     setCierreVoluntario(false);
     perfilDe.current = datos.token;
     persistToken(datos.token);
     setTokenState(datos.token);
     setOrganizador(datos.organizador);
     return datos.organizador;
+  }
+
+  async function login(email, password) {
+    return iniciarSesion(await loginApi(email, password));
+  }
+
+  async function registrar(nombre, email, password) {
+    return iniciarSesion(await registrarApi(nombre, email, password));
   }
 
   const value = {
@@ -123,6 +135,7 @@ export function AuthProvider({ children }) {
     cierreVoluntario,
     olvidarCierreVoluntario,
     login,
+    registrar,
     logout,
   };
 
