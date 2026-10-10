@@ -20,8 +20,6 @@ const VALORES_INICIALES = {
   estado: ESTADOS_SUBTAREA[0].value,
 };
 
-// Al editar no se cambian aquí la fecha ni las horas: eso se hace con
-// "Reprogramar", que revisa que el día no quede sobrecargado.
 function valoresDe(subtarea) {
   return {
     titulo: subtarea.titulo ?? "",
@@ -58,23 +56,16 @@ function SubtareaForm({ subtarea, onSubmit, onCancelar }) {
 
     setEnviando(true);
     try {
-      const detalles = {
+      const datos = {
         titulo: valores.titulo.trim(),
         descripcion: valores.descripcion.trim(),
         estado: valores.estado,
-      };
-
-      if (editando) {
-        await onSubmit(detalles);
-        return;
-      }
-
-      await onSubmit({
-        ...detalles,
         fecha_objetivo: valores.fecha_objetivo,
         horas_estimadas: Number(valores.horas_estimadas),
-      });
-      setValores(VALORES_INICIALES);
+      };
+
+      await onSubmit(datos);
+      if (!editando) setValores(VALORES_INICIALES);
     } catch (error) {
       const { campos, general } = erroresDeApi(error, CAMPOS);
       setErrores(campos);
@@ -113,31 +104,27 @@ function SubtareaForm({ subtarea, onSubmit, onCancelar }) {
       />
 
       <div className="form-row">
-        {!editando && (
-          <>
-            <Campo
-              type="date"
-              label="Fecha objetivo"
-              name="fecha_objetivo"
-              value={valores.fecha_objetivo}
-              onChange={handleChange}
-              error={errores.fecha_objetivo}
-            />
+        <Campo
+          type="date"
+          label="Fecha objetivo"
+          name="fecha_objetivo"
+          value={valores.fecha_objetivo}
+          onChange={handleChange}
+          error={errores.fecha_objetivo}
+        />
 
-            <Campo
-              type="number"
-              min="0"
-              step="0.5"
-              inputMode="decimal"
-              label="Horas estimadas"
-              name="horas_estimadas"
-              placeholder="Ejemplo: 2"
-              value={valores.horas_estimadas}
-              onChange={handleChange}
-              error={errores.horas_estimadas}
-            />
-          </>
-        )}
+        <Campo
+          type="number"
+          min="0"
+          step="0.5"
+          inputMode="decimal"
+          label="Horas estimadas"
+          name="horas_estimadas"
+          placeholder="Ejemplo: 2"
+          value={valores.horas_estimadas}
+          onChange={handleChange}
+          error={errores.horas_estimadas}
+        />
 
         <Campo
           as="select"
@@ -154,12 +141,6 @@ function SubtareaForm({ subtarea, onSubmit, onCancelar }) {
           ))}
         </Campo>
       </div>
-
-      {editando && (
-        <p className="field-help">
-          Para cambiar la fecha o las horas usa "Reprogramar".
-        </p>
-      )}
 
       <div className="form-actions">
         {editando && (

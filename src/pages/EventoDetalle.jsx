@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { ApiError } from "../api/client";
 import {
   actualizarEvento,
   actualizarSubtarea,
@@ -38,6 +39,8 @@ function EventoDetalle() {
   const [errorEliminar, setErrorEliminar] = useState("");
   // Subtarea que se está reprogramando (null si el diálogo está cerrado).
   const [reprogramando, setReprogramando] = useState(null);
+  // Cambios de "Editar gestión" que dejarían el día sobrecargado.
+  const [sobrecargaAlEditar, setSobrecargaAlEditar] = useState(null);
   const [mensajeSubtareas, setMensajeSubtareas] = useState("");
   // Id de la subtarea que se está editando en la lista (null si ninguna).
   const [editandoSubtarea, setEditandoSubtarea] = useState(null);
@@ -110,7 +113,26 @@ function EventoDetalle() {
   }
 
   async function guardarSubtarea(subtarea, cambios) {
-    const actualizada = await actualizarSubtarea(subtarea.id, cambios);
+    let actualizada;
+    try {
+      actualizada = await actualizarSubtarea(subtarea.id, cambios);
+    } catch (error) {
+      // Si el día se pasa del límite, no se guarda nada y se abre el aviso
+      // con las salidas (mover, reducir o posponer).
+      if (
+        error instanceof ApiError &&
+        error.status === 409 &&
+        error.data?.codigo === "sobrecarga_diaria"
+      ) {
+        setSobrecargaAlEditar({
+          cambios,
+          gestion: { ...subtarea, ...cambios },
+          conflicto: { ...error.data.conflicto, mensaje: error.message },
+        });
+        return;
+      }
+      throw error;
+    }
     reemplazarSubtarea(actualizada);
     setEditandoSubtarea(null);
     setMensaje("");
@@ -147,6 +169,8 @@ function EventoDetalle() {
 
   function alReprogramar(actualizada) {
     setReprogramando(null);
+    setSobrecargaAlEditar(null);
+    setEditandoSubtarea(null);
     reemplazarSubtarea(actualizada);
     setMensaje("");
     setMensajeSubtareas(mensajeReprogramada(actualizada));
@@ -382,6 +406,17 @@ function EventoDetalle() {
           key={reprogramando.id}
           gestion={reprogramando}
           onCerrar={() => setReprogramando(null)}
+          onGuardado={alReprogramar}
+        />
+      )}
+
+      {sobrecargaAlEditar && (
+        <ReprogramarDialog
+          key={`editar-${sobrecargaAlEditar.gestion.id}`}
+          gestion={sobrecargaAlEditar.gestion}
+          conflictoInicial={sobrecargaAlEditar.conflicto}
+          pendientes={sobrecargaAlEditar.cambios}
+          onCerrar={() => setSobrecargaAlEditar(null)}
           onGuardado={alReprogramar}
         />
       )}
