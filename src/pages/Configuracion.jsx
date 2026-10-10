@@ -138,7 +138,7 @@ function Configuracion() {
                     step="0.5"
                     label="Horas por día"
                     name="limite_horas_dia"
-                    ayuda={`Por ahora el límite es de ${LIMITE_DIARIO.porDefecto} horas por día.`}
+                    ayuda={`Por ahora el límite es de ${LIMITE_DIARIO.porDefecto} horas por día. Estamos trabajando para ti.`}
                     value={valor}
                     onChange={handleChange}
                     error={errorCampo}
