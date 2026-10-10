@@ -1471,13 +1471,11 @@
 }
 
 .franja-eventos {
-  margin-top: 62px;
+  margin-bottom: 18px;
 }
 
-/* El abejorro se asoma por encima del borde de la franja. */
 .franja-eventos img {
-  width: 140px;
-  margin: -66px 0 -4px;
+  width: 96px;
 }
 
 .franja-progreso {
