@@ -89,6 +89,9 @@ export function validarLimiteDiario(valor) {
   ) {
     return `El límite debe estar entre ${LIMITE_DIARIO.minimo} y ${LIMITE_DIARIO.maximo} horas por día.`;
   }
+  if (!Number.isInteger(horas * 2)) {
+    return "Usa medias horas: 6, 6.5, 7…";
+  }
 
   return "";
 }
