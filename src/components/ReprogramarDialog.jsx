@@ -5,19 +5,34 @@ import { formatearFecha, formatearFechaConDia } from "../utils/fechas";
 import { enHoras } from "../utils/horas";
 import Campo from "./Campo";
 
-// Diálogo para cambiar la fecha de una gestión. Si el día elegido queda por
-// encima del límite diario, el backend responde 409 con las cifras y aquí se
-// ofrecen las tres salidas: mover a otro día, reducir las horas o posponer.
-function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
+// Diálogo para cambiar la fecha y las horas de una gestión. Si el día elegido
+// queda por encima del límite diario, el backend responde 409 con las cifras y
+// aquí se ofrecen las tres salidas: mover a otro día, reducir las horas o
+// posponer.
+//
+// Desde "Editar gestión" se abre ya en el aviso (`conflictoInicial`) y
+// `pendientes` trae el resto de lo que la persona cambió (título, estado...),
+// para que se guarde junto con la salida que elija.
+function ReprogramarDialog({
+  gestion,
+  conflictoInicial = null,
+  pendientes = {},
+  onCerrar,
+  onGuardado,
+}) {
   const dialogRef = useRef(null);
   const tituloRef = useRef(null);
 
   // "fecha" (elegir día), "conflicto" (aviso con cifras) o "reducir" (horas).
-  const [paso, setPaso] = useState("fecha");
+  const [paso, setPaso] = useState(conflictoInicial ? "conflicto" : "fecha");
   const [fecha, setFecha] = useState(gestion.fecha_objetivo);
+  const [horasGestion, setHorasGestion] = useState(
+    String(Number(gestion.horas_estimadas)),
+  );
   const [horas, setHoras] = useState("");
-  const [conflicto, setConflicto] = useState(null);
+  const [conflicto, setConflicto] = useState(conflictoInicial);
   const [errorCampo, setErrorCampo] = useState("");
+  const [errorHoras, setErrorHoras] = useState("");
   const [errorGeneral, setErrorGeneral] = useState("");
   const [guardando, setGuardando] = useState(false);
 
@@ -41,6 +56,7 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
 
   function irA(nuevoPaso) {
     setErrorCampo("");
+    setErrorHoras("");
     setErrorGeneral("");
     setPaso(nuevoPaso);
   }
@@ -48,10 +64,14 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
   async function guardar(cambios) {
     setGuardando(true);
     setErrorCampo("");
+    setErrorHoras("");
     setErrorGeneral("");
 
     try {
-      const actualizada = await actualizarSubtarea(gestion.id, cambios);
+      const actualizada = await actualizarSubtarea(gestion.id, {
+        ...pendientes,
+        ...cambios,
+      });
       dialogRef.current.close();
       onGuardado(actualizada);
     } catch (error) {
@@ -71,24 +91,48 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
         "fecha_objetivo",
         "horas_estimadas",
       ]);
-      const delCampo = campos.fecha_objetivo ?? campos.horas_estimadas ?? "";
-      setErrorCampo(delCampo);
-      setErrorGeneral(delCampo ? "" : general);
+      setErrorCampo(campos.fecha_objetivo ?? "");
+      setErrorHoras(campos.horas_estimadas ?? "");
+      setErrorGeneral(
+        campos.fecha_objetivo || campos.horas_estimadas ? "" : general,
+      );
     }
+  }
+
+  // Si en el formulario cambiaron las horas, las salidas "otro día" y
+  // "posponer" las llevan consigo.
+  function horasCambiadas() {
+    const nuevas = Number(horasGestion);
+    return nuevas > 0 && nuevas !== Number(gestion.horas_estimadas)
+      ? { horas_estimadas: nuevas }
+      : {};
   }
 
   function enviarFecha(e) {
     e.preventDefault();
 
+    const nuevasHoras = Number(horasGestion);
+    const cambiaFecha = fecha !== gestion.fecha_objetivo;
+    const cambiaHoras = nuevasHoras !== Number(gestion.horas_estimadas);
+
+    setErrorCampo("");
+    setErrorHoras("");
     if (!fecha) {
       setErrorCampo("Elige la nueva fecha.");
       return;
     }
-    if (fecha === gestion.fecha_objetivo) {
-      setErrorCampo("Esa es la fecha que ya tiene. Elige otro día.");
+    if (horasGestion === "" || Number.isNaN(nuevasHoras) || nuevasHoras <= 0) {
+      setErrorHoras("Las horas estimadas deben ser mayores a 0.");
       return;
     }
-    guardar({ fecha_objetivo: fecha });
+    if (!cambiaFecha && !cambiaHoras) {
+      setErrorCampo("No hay nada que cambiar. Elige otro día u otras horas.");
+      return;
+    }
+    guardar({
+      fecha_objetivo: fecha,
+      ...horasCambiadas(),
+    });
   }
 
   function enviarHoras(e) {
@@ -99,14 +143,20 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
       setErrorCampo("Escribe las nuevas horas, mayores a 0.");
       return;
     }
-    if (nuevas >= Number(gestion.horas_estimadas)) {
+    if (nuevas >= horasAReducir) {
       setErrorCampo(
-        `Para reducir, escribe menos de las ${enHoras(gestion.horas_estimadas)} que tiene ahora.`,
+        `Para reducir, escribe menos de las ${enHoras(horasAReducir)} que tiene ahora.`,
       );
       return;
     }
-    guardar({ fecha_objetivo: fecha, horas_estimadas: nuevas });
+    guardar({ fecha_objetivo: conflicto.fecha, horas_estimadas: nuevas });
   }
+
+  // Horas con las que la gestión chocó ese día (puede ser más de las que tenía
+  // guardadas, si se las subieron al editar).
+  const horasAReducir = Number(
+    conflicto?.horas_gestion ?? gestion.horas_estimadas,
+  );
 
   // Horas que todavía caben ese día con las demás gestiones ya planificadas.
   const horasLibres = conflicto
@@ -161,7 +211,10 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
                       className="btn-suave"
                       disabled={guardando}
                       onClick={() =>
-                        guardar({ fecha_objetivo: sugerida.fecha })
+                        guardar({
+                          fecha_objetivo: sugerida.fecha,
+                          ...horasCambiadas(),
+                        })
                       }
                     >
                       <strong>{formatearFechaConDia(sugerida.fecha)}</strong>
@@ -200,6 +253,22 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
                 setErrorCampo("");
               }}
               error={errorCampo}
+            />
+
+            <Campo
+              type="number"
+              inputMode="decimal"
+              min="0.5"
+              step="0.5"
+              label="Horas estimadas"
+              name="horas_estimadas"
+              value={horasGestion}
+              onChange={(e) => {
+                setHorasGestion(e.target.value);
+                setErrorCampo("");
+                setErrorHoras("");
+              }}
+              error={errorHoras}
             />
           </div>
 
@@ -284,7 +353,12 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
                 type="button"
                 className="btn-link"
                 disabled={guardando}
-                onClick={() => guardar({ fecha_objetivo: posponer.fecha })}
+                onClick={() =>
+                  guardar({
+                    fecha_objetivo: posponer.fecha,
+                    ...horasCambiadas(),
+                  })
+                }
               >
                 {guardando
                   ? "Guardando..."
@@ -314,8 +388,7 @@ function ReprogramarDialog({ gestion, onCerrar, onGuardado }) {
             Reducir horas estimadas
           </h3>
           <p>
-            <strong>{gestion.titulo}</strong> toma{" "}
-            {enHoras(gestion.horas_estimadas)}.{" "}
+            <strong>{gestion.titulo}</strong> toma {enHoras(horasAReducir)}.{" "}
             {horasLibres > 0
               ? `El ${formatearFecha(conflicto.fecha)} ${horasLibres === 1 ? "te cabe" : "te caben"} ${enHoras(horasLibres)} más.`
               : `El ${formatearFecha(conflicto.fecha)} ya está lleno con tus otras gestiones: es mejor moverla a otro día.`}
